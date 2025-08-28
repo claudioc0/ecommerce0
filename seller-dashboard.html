@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Painel do Lojista - EcoGear</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="index.html">EcoGear</a>
+  <nav>
+    <button class="btn" id="showDashboardBtn">Dashboard</button>
+  </nav>
+</header>
+
+<main class="container">
+  <h2>Painel do Lojista</h2>
+  <section class="card" id="dashboardCard" style="display:none;">
+    <h3>Dashboard</h3>
+    <div style="display:flex;gap:2rem;flex-wrap:wrap;">
+      <div style="flex:1;min-width:180px;text-align:center;">
+        <div style="font-size:2.2rem;font-weight:bold;">R$ 4.320,00</div>
+        <div style="color:#555;">Vendas no mês</div>
+      </div>
+      <div style="flex:1;min-width:180px;text-align:center;">
+        <div style="font-size:2.2rem;font-weight:bold;">37</div>
+        <div style="color:#555;">Pedidos</div>
+      </div>
+      <div style="flex:1;min-width:180px;text-align:center;">
+        <div style="font-size:2.2rem;font-weight:bold;">5</div>
+        <div style="color:#555;">Produtos fora de estoque</div>
+      </div>
+      <div style="flex:1;min-width:180px;text-align:center;">
+        <div style="font-size:2.2rem;font-weight:bold;">98%</div>
+        <div style="color:#555;">Satisfação dos clientes</div>
+      </div>
+    </div>
+    <hr style="margin:2rem 0;">
+    <div>
+      <h4 style="margin-bottom:1rem;">Gráfico de vendas (simulado)</h4>
+      <div style="width:100%;height:120px;background:linear-gradient(90deg,#111 60%,#eee 100%);border-radius:8px;"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>Gerenciar Produtos</h3>
+    <button class="btn" id="openAdd">Adicionar Produto (simulado)</button>
+    <div id="addProductForm" style="display:none; margin-top:1rem;">
+      <form id="sellerAddForm">
+        <label>Nome do produto<input type="text" id="prodName" required></label>
+        <label>Preço<input type="number" id="prodPrice" required min="0" step="0.01"></label>
+        <label>Categoria
+          <select id="prodCategory">
+            <option value="Roupas">Roupas</option>
+            <option value="Infantil">Infantil</option>
+            <option value="Esportivo">Esportivo</option>
+            <option value="Acessórios">Acessórios</option>
+          </select>
+        </label>
+        <label>Imagem (URL)<input type="url" id="prodImg"></label>
+        <button class="btn" type="submit">Salvar</button>
+      </form>
+    </div>
+    <div id="sellerProducts"></div>
+  </section>
+
+  <section class="card">
+    <h3>Pedidos Recentes</h3>
+    <ul id="recentOrders">
+      <li>#1001 - Cliente: Ana - Status: Enviado</li>
+      <li>#1002 - Cliente: João - Status: Processando</li>
+      <li>#1003 - Cliente: Maria - Status: Entregue</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h3>Configurações da Loja</h3>
+    <button class="btn alt" onclick="alert('Funcionalidade simulada!')">Editar Perfil</button>
+    <button class="btn alt" onclick="alert('Funcionalidade simulada!')">Gerenciar Frete</button>
+  </section>
+</main>
+
+<script src="script.js"></script>
+<script>
+let sellerProducts = [
+  {name: 'Jaqueta Vintage', price: 129.90, category: 'Roupas', img: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=100&q=80'},
+  {name: 'Bolsa Reciclada', price: 99.90, category: 'Acessórios', img: 'https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=100&q=80'}
+];
+
+function renderSellerProducts() {
+  const root = document.getElementById('sellerProducts');
+  if (!root) return;
+  if (sellerProducts.length === 0) {
+    root.innerHTML = '<p>Nenhum produto cadastrado.</p>';
+    return;
+  }
+  root.innerHTML = '<ul style="list-style:none;padding:0;">' + sellerProducts.map(p => `
+    <li style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;background:#f6f6f6;border-radius:8px;padding:0.7rem 1rem;">
+      <img src="${p.img}" alt="" style="width:50px;height:50px;object-fit:cover;border-radius:8px;border:1px solid #eee;">
+      <div>
+        <strong>${p.name}</strong><br>
+        <span>R$ ${p.price.toFixed(2)}</span> | <span>${p.category}</span>
+      </div>
+      <button class="btn alt" style="margin-left:auto;" onclick="removeSellerProduct('${p.name}')">Excluir</button>
+    </li>
+  `).join('') + '</ul>';
+}
+
+function removeSellerProduct(name) {
+  sellerProducts = sellerProducts.filter(p => p.name !== name);
+  renderSellerProducts();
+}
+
+document.getElementById('openAdd').onclick = function() {
+  document.getElementById('addProductForm').style.display = 'block';
+};
+
+document.getElementById('sellerAddForm').onsubmit = function(e) {
+  e.preventDefault();
+  const name = document.getElementById('prodName').value;
+  const price = parseFloat(document.getElementById('prodPrice').value);
+  const category = document.getElementById('prodCategory').value;
+  const img = document.getElementById('prodImg').value || 'https://via.placeholder.com/100';
+  sellerProducts.push({name, price, category, img});
+  renderSellerProducts();
+  this.reset();
+  document.getElementById('addProductForm').style.display = 'none';
+};
+
+document.getElementById('showDashboardBtn').onclick = function() {
+  const dash = document.getElementById('dashboardCard');
+  dash.style.display = (dash.style.display === 'block') ? 'none' : 'block';
+};
+
+renderSellerProducts();
+</script>
+</body>
+</html>

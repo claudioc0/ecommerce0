@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>EcoGear - Home</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    #profileModal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.3);
+  z-index: 999;
+  align-items: center;
+  justify-content: center;
+}
+
+#profileModal > div {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 350px;
+  width: 90%;
+  margin: auto;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+}
+
+#editProfileForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+#editProfileForm label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+  color: #111;
+  margin-bottom: 0.2rem;
+}
+
+#editProfileForm input {
+  margin-top: 0.5rem;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #111;
+  font-size: 1rem;
+  background: #fff;
+  color: #111;
+  outline: none;
+  transition: border 0.2s;
+}
+
+#editProfileForm input:focus {
+  border-color: #222;
+}
+
+#editProfileForm .btn {
+  margin-top: 1rem;
+  width: 100%;
+  font-size: 1.1rem;
+  padding: 0.8rem 0;
+}
+  </style>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="index.html">EcoGear</a>
+  <nav>
+    <a href="shop-grid.html">Loja</a>
+  </nav>
+  <div class="top-actions">
+    <a href="login.html">Entrar</a> | <a href="signup.html">Registrar</a>
+    <a class="cart" href="cart.html">Carrinho (<span id="cartCount">0</span>)</a>
+    <span id="userProfile" style="margin-left:1.5rem; cursor:pointer; display:none;">
+      <img src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" alt="Perfil" style="width:32px;height:32px;border-radius:50%;vertical-align:middle;">
+    </span>
+  </div>
+</header>
+
+<div id="profileModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.3);z-index:999;align-items:center;justify-content:center;">
+  <div style="background:#fff;padding:2rem;border-radius:12px;max-width:350px;width:90%;margin:auto;box-shadow:0 2px 12px rgba(0,0,0,0.12);">
+    <h3>Perfil do Usuário</h3>
+    <form id="editProfileForm" style="display:flex;flex-direction:column;gap:1rem;">
+      <label>Nome<input type="text" id="profileName" value="Usuário" /></label>
+      <label>Email<input type="email" id="profileEmail" value="usuario@email.com" /></label>
+      <button class="btn" type="submit">Salvar alterações</button>
+      <button class="btn alt" type="button" id="deleteAccountBtn" style="margin-top:1rem;">Deletar conta</button>
+      <button class="btn alt" type="button" id="logoutBtn" style="margin-top:1rem;">Logout</button>
+      <button class="btn alt" type="button" id="closeProfileBtn" style="margin-top:1rem;">Fechar</button>
+    </form>
+  </div>
+</div>
+
+<main class="container">
+  <section class="hero">
+    <h1>Plataforma de e‑commerce modular para moda</h1>
+    <p>Templates, estoque, pagamentos e módulos opcionais para brechós, grifes e muito mais.</p>
+    <div class="cta">
+      <a class="btn" href="shop-grid.html">Ver Produtos</a>
+      <a class="btn alt" href="signup-store.html">Criar minha loja</a>
+    </div>
+  </section>
+
+  <section class="features">
+    <article>
+      <h3>Compra Segura</h3>
+      <p>Ambiente protegido para suas compras e dados pessoais.</p>
+    </article>
+    <article>
+      <h3>Entrega Rápida</h3>
+      <p>Receba seus produtos com agilidade e rastreio online.</p>
+    </article>
+    <article>
+      <h3>Suporte ao Cliente</h3>
+      <p>Atendimento dedicado para dúvidas e pós-venda.</p>
+    </article>
+  </section>
+</main>
+
+<footer class="footer">
+  <small>Protótipo — EcoGear © 2025</small>
+</footer>
+
+<script src="script.js"></script>
+<script>
+function isUserLoggedIn() {
+  return localStorage.getItem('userLoggedIn') === 'true';
+}
+function isUserSeller() {
+  return localStorage.getItem('userIsSeller') === 'true';
+}
+
+function updateNavbarForLogin() {
+  document.getElementById('userProfile').style.display = 'inline-block';
+  document.querySelector('.top-actions a[href="login.html"]').style.display = 'none';
+  document.querySelector('.top-actions a[href="signup.html"]').style.display = 'none';
+  const lojaBtn = document.querySelector('.cta a.btn.alt');
+  if (lojaBtn) {
+    lojaBtn.style.display = isUserSeller() ? 'inline-block' : 'none';
+  }
+}
+
+function updateNavbarForLogout() {
+  document.getElementById('userProfile').style.display = 'none';
+  document.querySelector('.top-actions a[href="login.html"]').style.display = 'inline';
+  document.querySelector('.top-actions a[href="signup.html"]').style.display = 'inline';
+  const lojaBtn = document.querySelector('.cta a.btn.alt');
+  if (lojaBtn) {
+    lojaBtn.style.display = 'none';
+  }
+}
+
+function updateFeaturesSection() {
+  const featuresSection = document.querySelector('.features');
+  if (!featuresSection) return;
+  if (isUserSeller()) {
+    featuresSection.innerHTML = `
+      <article>
+        <h3>Personalização</h3>
+        <p>Troque tema e pré‑visualize antes de publicar.</p>
+      </article>
+      <article>
+        <h3>Módulos opcionais</h3>
+        <p>Ative funcionalidades específicas por tipo de loja.</p>
+      </article>
+      <article>
+        <h3>Gestão simples</h3>
+        <p>Painel do lojista com controles de estoque e pedidos.</p>
+      </article>
+    `;
+  } else {
+    featuresSection.innerHTML = `
+      <article>
+        <h3>Compra Segura</h3>
+        <p>Ambiente protegido para suas compras e dados pessoais.</p>
+      </article>
+      <article>
+        <h3>Entrega Rápida</h3>
+        <p>Receba seus produtos com agilidade e rastreio online.</p>
+      </article>
+      <article>
+        <h3>Suporte ao Cliente</h3>
+        <p>Atendimento dedicado para dúvidas e pós-venda.</p>
+      </article>
+    `;
+  }
+}
+
+if (isUserLoggedIn()) {
+  updateNavbarForLogin();
+  updateFeaturesSection();
+} else {
+  updateNavbarForLogout();
+  updateFeaturesSection();
+}
+
+document.getElementById('userProfile').onclick = function() {
+  document.getElementById('profileModal').style.display = 'flex';
+};
+
+document.getElementById('closeProfileBtn').onclick = function() {
+  document.getElementById('profileModal').style.display = 'none';
+};
+
+document.getElementById('editProfileForm').onsubmit = function(e) {
+  e.preventDefault();
+  alert('Alterações salvas (simulado)');
+  document.getElementById('profileModal').style.display = 'none';
+};
+
+document.getElementById('deleteAccountBtn').onclick = function() {
+  if (confirm('Tem certeza que deseja deletar sua conta?')) {
+    alert('Conta deletada (simulado)');
+    document.getElementById('profileModal').style.display = 'none';
+    localStorage.removeItem('userLoggedIn');
+    updateNavbarForLogout();
+  }
+};
+
+document.getElementById('logoutBtn').onclick = function() {
+  localStorage.removeItem('userLoggedIn');
+  document.getElementById('profileModal').style.display = 'none';
+  updateNavbarForLogout();
+};
+
+document.getElementById('signupForm').onsubmit = function(e) {
+  e.preventDefault();
+  alert('Conta criada com sucesso (simulado)');
+  localStorage.setItem('userLoggedIn', 'true');
+  window.location.href = "index.html";
+};
+</script>
+</body>
+</html>
