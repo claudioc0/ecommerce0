@@ -4,7 +4,7 @@ const sampleProducts = [
     title: 'Jaqueta Vintage',
     price: 129.90,
     category: 'Roupas',
-    img: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80'
+    img: 'https://images.unsplash.com/photo-1724856604247-0de2c43b6491?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
   },
   {
     id: 2,
@@ -18,35 +18,35 @@ const sampleProducts = [
     title: 'Calça Jeans',
     price: 149.90,
     category: 'Roupas',
-    img: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80'
+    img: 'https://images.unsplash.com/photo-1542272604-787c3835535d?q=80&w=1026&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
   },
   {
     id: 4,
     title: 'Macacão Infantil',
     price: 89.90,
     category: 'Infantil',
-    img: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80'
+    img: 'https://plus.unsplash.com/premium_photo-1700429926449-2de63c04501d?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
   },
   {
     id: 5,
     title: 'Short Esportivo',
     price: 79.90,
     category: 'Esportivo',
-    img: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80'
+    img: 'https://images.unsplash.com/photo-1628476801147-b3e3cb99fe68?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
   },
   {
     id: 6,
     title: 'Bolsa Reciclada',
     price: 99.90,
     category: 'Acessórios',
-    img: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80'
+    img: 'https://images.unsplash.com/photo-1597692021958-b698c472c25b?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
   },
   {
     id: 7,
     title: 'Tênis Sustentável',
     price: 159.90,
     category: 'Esportivo',
-    img: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80'
+    img: 'https://images.unsplash.com/photo-1679800558771-0e1737f489c0?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
   }
 ];
 
@@ -68,23 +68,50 @@ function addToCart(id){
   alert('Adicionado ao carrinho: '+p.title);
 }
 
-function renderGrid(){
+function renderGrid(filterCategory = '') {
   const root = document.getElementById('productGrid');
-  if(!root) return;
-  root.innerHTML='';
-  sampleProducts.forEach(p=>{
-    const d = document.createElement('div'); d.className='product';
-    d.innerHTML = `
-      <img src="${p.img}" alt="" style="width:100px;height:100px;object-fit:cover;border-radius:10px;display:block;margin:0 auto 1rem auto;">
-      <h4>${p.title}</h4>
-      <div>R$ ${p.price.toFixed(2)}</div>
-      <div style="margin-top:8px">
-        <a class="btn" href="product.html?id=${p.id}">Ver</a>
-        <button class="btn alt" onclick="addToCart(${p.id})">Comprar</button>
-      </div>
+  if (!root) return;
+  root.innerHTML = '';
+  sampleProducts
+    .filter(p => !filterCategory || p.category === filterCategory)
+    .forEach(p => {
+      const d = document.createElement('div');
+      d.className = 'product';
+      d.innerHTML = `
+        <img src="${p.img}" alt="" style="width:100px;height:100px;object-fit:cover;border-radius:10px;display:block;">
+        <h4>${p.title}</h4>
+        <div>R$ ${p.price.toFixed(2)}</div>
+        <div style="margin-top:8px">
+          <a class="btn" href="product.html?id=${p.id}">Ver</a>
+          <button class="btn alt" onclick="addToCart(${p.id})">Comprar</button>
+        </div>
+      `;
+      root.appendChild(d);
+    });
+}
+
+function setupCategoryFilter() {
+  const gridContainer = document.getElementById('productGrid');
+  if (!gridContainer) return;
+
+  let filterBar = document.getElementById('categoryFilterBar');
+  if (!filterBar) {
+    filterBar = document.createElement('div');
+    filterBar.id = 'categoryFilterBar';
+    filterBar.style.margin = '1rem 0';
+    filterBar.innerHTML = `
+      <select id="categoryFilter" style="padding:0.5rem 1rem;border-radius:8px;border:1px solid #111;">
+        <option value="">Todas as categorias</option>
+        ${[...new Set(sampleProducts.map(p => p.category))]
+          .map(cat => `<option value="${cat}">${cat}</option>`).join('')}
+      </select>
     `;
-    root.appendChild(d);
-  });
+    gridContainer.parentNode.insertBefore(filterBar, gridContainer);
+  }
+
+  document.getElementById('categoryFilter').onchange = function () {
+    renderGrid(this.value);
+  };
 }
 
 function renderList(){
@@ -93,8 +120,8 @@ function renderList(){
   root.innerHTML='';
   sampleProducts.forEach(p=>{
     const d = document.createElement('div'); d.className='product';
-    d.innerHTML = `<img src="${p.img}" alt="" style="width:120px;height:80px"><div><h4>${p.title}</h4><div>R$ ${p.price.toFixed(2)}</div>
-    <div style="margin-top:6px"><a class="btn" href="product.html?id=${p.id}">Ver</a> <button class="btn" onclick="addToCart(${p.id})">Comprar</button></div></div>`;
+    d.innerHTML = `<img src="${p.img}" alt="" style="width:120px;height:80px;height:100px;object-fit:cover;border-radius:10px;display:block;"><div><h4>${p.title}</h4><div>R$ ${p.price.toFixed(2)}</div>
+    <div style="margin-top:6px"><a class="btn" href="product.html?id=${p.id}">Ver</a> <button class="btn" onclick="addToCart(${p.id})">Comprar</button></div><br></div>`;
     root.appendChild(d);
   });
 }
@@ -257,9 +284,10 @@ function handleLogin(userType) {
   updateMenuForUser(userType === 'seller', userType === 'admin');
 }
 
-document.addEventListener('DOMContentLoaded', ()=>{
+document.addEventListener('DOMContentLoaded', () => {
   updateCartCounters();
   setupForms();
+  setupCategoryFilter(); 
   renderGrid();
   renderList();
   renderProductDetail();
@@ -267,15 +295,15 @@ document.addEventListener('DOMContentLoaded', ()=>{
   renderSellerProducts();
   renderUsers();
 
-  document.querySelectorAll('.theme-switcher button').forEach(btn=>{
-    btn.addEventListener('click', ()=> document.body.className = btn.dataset.theme);
+  document.querySelectorAll('.theme-switcher button').forEach(btn => {
+    btn.addEventListener('click', () => document.body.className = btn.dataset.theme);
   });
 
-  const currentUser = JSON.parse(localStorage.getItem('currentUser')||'null');
-  if(location.pathname.endsWith('brecho-quality.html')){
-    const users = JSON.parse(localStorage.getItem('users')||'[]');
-    const hasBrecho = users.some(u=>u.type==='brecho');
-    if(!hasBrecho && (!currentUser || currentUser.type!=='seller')){
+  const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+  if (location.pathname.endsWith('brecho-quality.html')) {
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    const hasBrecho = users.some(u => u.type === 'brecho');
+    if (!hasBrecho && (!currentUser || currentUser.type !== 'seller')) {
       document.body.innerHTML = '<main class="container"><h2>Acesso negado</h2><p>Este módulo é exclusivo para contas de tipo <strong>brecho</strong>.</p></main>';
     } else {
       renderQC();
