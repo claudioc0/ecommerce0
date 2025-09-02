@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard Consultor - EcoGear</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .consultant-header {
+      background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 16px;
+      margin-bottom: 2rem;
+    }
+
+    .style-engine {
+      background: #f0f9ff;
+      border: 2px solid #06b6d4;
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+
+    .client-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .client-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-left: 4px solid #06b6d4;
+      transition: all 0.2s;
+    }
+
+    .client-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(6, 182, 212, 0.2);
+    }
+
+    .style-recommendation {
+      background: linear-gradient(135deg, #f3e8ff 0%, #e0e7ff 100%);
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 0.5rem 0;
+    }
+
+    .trend-indicator {
+      display: inline-block;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      margin: 0.2rem;
+    }
+
+    .trend-hot { background: #fecaca; color: #991b1b; }
+    .trend-rising { background: #fed7aa; color: #9a3412; }
+    .trend-stable { background: #d1fae5; color: #065f46; }
+  </style>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="index.html">EcoGear</a>
+  <nav>
+    <a href="shop-grid.html">Loja</a>
+    <a href="consultant-dashboard.html">Dashboard</a>
+    <a href="style-recommendations.html">Recomendações</a>
+    <a href="trend-analysis.html">Tendências</a>
+  </nav>
+  <div class="top-actions">
+    <span style="background: #06b6d4; color: white; padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: bold;">CONSULTOR</span>
+  </div>
+</header>
+
+<main class="container">
+  <div class="consultant-header">
+    <h1>👗 Dashboard do Consultor de Moda</h1>
+    <p>Gerencie seus clientes, crie looks personalizados e acompanhe tendências</p>
+  </div>
+
+  <div class="style-engine">
+    <h3>🎨 Engine de Estilo Personalizado</h3>
+    <p>Funcionalidade exclusiva para consultores - Crie recomendações baseadas em IA</p>
+    
+    <form id="styleAnalysisForm">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0;">
+        <label>Tipo Corporal
+          <select id="bodyType">
+            <option>Ampulheta</option>
+            <option>Pêra</option>
+            <option>Maçã</option>
+            <option>Retângulo</option>
+            <option>Triângulo Invertido</option>
+          </select>
+        </label>
+        <label>Estilo Preferido
+          <select id="stylePreference">
+            <option>Clássico</option>
+            <option>Boho</option>
+            <option>Minimalista</option>
+            <option>Romântico</option>
+            <option>Urbano</option>
+          </select>
+        </label>
+      </div>
+      <button class="btn" type="submit">Gerar Recomendações</button>
+    </form>
+
+    <div id="styleRecommendations" style="display: none;">
+      <h4>Recomendações Geradas:</h4>
+      <div class="style-recommendation">
+        <strong>Look Profissional:</strong> Blazer estruturado + calça de alfaiataria + scarpin
+      </div>
+      <div class="style-recommendation">
+        <strong>Look Casual:</strong> Jeans de cintura alta + blusa fluida + tênis sustentável
+      </div>
+    </div>
+  </div>
+
+  <section class="card">
+    <h3>👥 Carteira de Clientes</h3>
+    <div class="client-grid" id="clientPortfolio">
+      <div class="client-card">
+        <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+          <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=50&h=50&fit=crop&crop=face" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 1rem;">
+          <div>
+            <strong>Ana Silva</strong><br>
+            <small>Cliente desde 2024</small>
+          </div>
+        </div>
+        <div style="margin-bottom: 1rem;">
+          <div style="font-size: 0.9rem; color: #666;">Próxima consulta: 25/01/2025</div>
+          <div style="font-size: 0.9rem; color: #666;">Orçamento: R$ 2.000,00</div>
+        </div>
+        <button class="btn" onclick="openClientProfile('ana')">Ver Perfil</button>
+      </div>
+
+      <div class="client-card">
+        <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 1rem;">
+          <div>
+            <strong>Carlos Mendes</strong><br>
+            <small>Cliente desde 2023</small>
+          </div>
+        </div>
+        <div style="margin-bottom: 1rem;">
+          <div style="font-size: 0.9rem; color: #666;">Próxima consulta: 28/01/2025</div>
+          <div style="font-size: 0.9rem; color: #666;">Orçamento: R$ 1.500,00</div>
+        </div>
+        <button class="btn" onclick="openClientProfile('carlos')">Ver Perfil</button>
+      </div>
+    </div>
+    <button class="btn alt" id="addClientBtn">+ Adicionar Cliente</button>
+  </section>
+
+  <section class="card">
+    <h3>📈 Análise de Tendências</h3>
+    <div style="margin: 1rem 0;">
+      <h4>Tendências Atuais:</h4>
+      <div>
+        <span class="trend-indicator trend-hot">🔥 Cores Terrosas</span>
+        <span class="trend-indicator trend-rising">📈 Vintage 90s</span>
+        <span class="trend-indicator trend-stable">✨ Minimalismo</span>
+        <span class="trend-indicator trend-hot">🔥 Sustentabilidade</span>
+      </div>
+    </div>
+    
+    <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; margin-top: 1rem;">
+      <h5>Recomendação da Semana:</h5>
+      <p>Aposte em peças de linho e algodão orgânico. A demanda por materiais sustentáveis cresceu 340% este mês.</p>
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>💼 Ferramentas do Consultor</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+      <button class="btn" onclick="openColorAnalysis()">Análise de Cores</button>
+      <button class="btn" onclick="openBodyAnalysis()">Análise Corporal</button>
+      <button class="btn" onclick="openSeasonalAnalysis()">Análise Sazonal</button>
+      <button class="btn" onclick="openBudgetPlanner()">Planejador de Orçamento</button>
+    </div>
+  </section>
+</main>
+
+<script src="script.js"></script>
+<script src="user-access-manager.js"></script>
+<script>
+// Verificação de acesso exclusivo para consultores
+if (!UserAccessManager.hasPermission('style_recommendations')) {
+  document.body.innerHTML = `
+    <header class="topbar">
+      <a class="brand" href="index.html">EcoGear</a>
+    </header>
+    <main class="container">
+      <div class="card" style="text-align: center; padding: 3rem;">
+        <h2>🔒 Acesso Restrito</h2>
+        <p>Este dashboard é exclusivo para <strong>Consultores de Moda</strong> certificados.</p>
+        <p>Entre em contato para informações sobre certificação.</p>
+        <a href="index.html" class="btn" style="margin-top: 1rem;">Voltar ao Início</a>
+      </div>
+    </main>
+  `;
+}
+
+document.getElementById('styleAnalysisForm').onsubmit = function(e) {
+  e.preventDefault();
+  document.getElementById('styleRecommendations').style.display = 'block';
+};
+
+function openClientProfile(clientId) {
+  alert(`Abrindo perfil do cliente ${clientId} (funcionalidade simulada)`);
+}
+
+function openColorAnalysis() {
+  alert('Ferramenta de análise de cores (funcionalidade simulada)');
+}
+
+function openBodyAnalysis() {
+  alert('Ferramenta de análise corporal (funcionalidade simulada)');
+}
+
+function openSeasonalAnalysis() {
+  alert('Ferramenta de análise sazonal (funcionalidade simulada)');
+}
+
+function openBudgetPlanner() {
+  alert('Planejador de orçamento (funcionalidade simulada)');
+}
+
+document.getElementById('addClientBtn').onclick = function() {
+  alert('Adicionar novo cliente (funcionalidade simulada)');
+};
+</script>
+</body>
+</html>
