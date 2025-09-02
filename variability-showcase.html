@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Showcase de Alta Variabilidade - EcoGear</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .showcase-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      color: white;
+      padding: 3rem 2rem;
+      border-radius: 20px;
+      margin-bottom: 3rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .showcase-header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+      animation: float 30s linear infinite;
+    }
+
+    @keyframes float {
+      0% { transform: translateX(-100px) translateY(-100px) rotate(0deg); }
+      100% { transform: translateX(100px) translateY(100px) rotate(360deg); }
+    }
+
+    .variability-matrix {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      margin: 3rem 0;
+    }
+
+    .interface-preview {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      transition: all 0.4s;
+      border: 3px solid transparent;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .interface-preview:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.2);
+    }
+
+    .interface-preview.guest { border-color: #6b7280; }
+    .interface-preview.customer { border-color: #3b82f6; }
+    .interface-preview.vip { border-color: #fbbf24; }
+    .interface-preview.brecho { border-color: #8b5cf6; }
+    .interface-preview.grife { border-color: #ec4899; }
+    .interface-preview.consultant { border-color: #06b6d4; }
+    .interface-preview.auditor { border-color: #22c55e; }
+    .interface-preview.distributor { border-color: #f59e0b; }
+
+    .user-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin: 0 auto 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 2rem;
+      font-weight: bold;
+      position: relative;
+    }
+
+    .exclusive-indicator {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: linear-gradient(45deg, #ff6b6b, #feca57);
+      color: white;
+      padding: 0.2rem 0.5rem;
+      border-radius: 10px;
+      font-size: 0.6rem;
+      font-weight: bold;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 0.5rem;
+      margin: 1rem 0;
+    }
+
+    .feature-tag {
+      background: #f1f5f9;
+      padding: 0.3rem 0.6rem;
+      border-radius: 15px;
+      font-size: 0.7rem;
+      text-align: center;
+      border: 1px solid #e2e8f0;
+    }
+
+    .feature-tag.exclusive {
+      background: linear-gradient(45deg, #ffeaa7, #fab1a0);
+      color: #2d3436;
+      font-weight: bold;
+    }
+
+    .reuse-visualization {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      margin: 3rem 0;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    .reuse-layer {
+      background: #f8fafc;
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 0.5rem 0;
+      border-left: 4px solid;
+      position: relative;
+    }
+
+    .reuse-layer.base { border-left-color: #22c55e; }
+    .reuse-layer.shared { border-left-color: #3b82f6; }
+    .reuse-layer.specialized { border-left-color: #f59e0b; }
+    .reuse-layer.exclusive { border-left-color: #ec4899; }
+
+    .reuse-percentage {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: white;
+      padding: 0.3rem 0.8rem;
+      border-radius: 15px;
+      font-weight: bold;
+      font-size: 0.8rem;
+    }
+
+    .demo-controls {
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      border-radius: 16px;
+      padding: 2rem;
+      margin: 3rem 0;
+      text-align: center;
+      border: 2px solid #e2e8f0;
+    }
+
+    .quick-switch {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    .switch-btn {
+      background: white;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .switch-btn:hover {
+      border-color: #6366f1;
+      background: #f0f9ff;
+      transform: scale(1.05);
+    }
+
+    .switch-btn.active {
+      border-color: #6366f1;
+      background: #6366f1;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="index.html">EcoGear</a>
+  <nav>
+    <a href="shop-grid.html">Loja</a>
+    <a href="user-type-selector.html">Testar Tipos</a>
+    <a href="variability-showcase.html">Showcase</a>
+    <a href="interface-customizer.html">Personalizar</a>
+  </nav>
+  <div class="top-actions">
+    <span id="currentUserDisplay">SHOWCASE MODE</span>
+  </div>
+</header>
+
+<main class="container">
+  <div class="showcase-header">
+    <h1>🎭 Showcase de Alta Variabilidade</h1>
+    <p>Uma plataforma, infinitas possibilidades de experiência</p>
+    <div style="margin-top: 1.5rem; font-size: 1.2rem; position: relative; z-index: 1;">
+      <strong>8 interfaces únicas • 20+ módulos exclusivos • Personalização ilimitada</strong>
+    </div>
+  </div>
+
+  <section class="card">
+    <h2>🧠 O que é Alta Variabilidade?</h2>
+    <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%); padding: 2rem; border-radius: 12px; margin: 2rem 0;">
+      <p style="font-size: 1.2rem; line-height: 1.8; margin-bottom: 1.5rem;">
+        <strong>Alta Variabilidade</strong> é a capacidade de uma única plataforma oferecer experiências 
+        completamente diferentes e especializadas para cada tipo de usuário, mantendo uma base de código 
+        eficiente e reutilizável.
+      </p>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+        <div style="background: white; padding: 1rem; border-radius: 8px;">
+          <strong>🎯 Especialização</strong>
+          <p style="font-size: 0.9rem;">Cada usuário vê apenas o que precisa</p>
+        </div>
+        <div style="background: white; padding: 1rem; border-radius: 8px;">
+          <strong>♻️ Reuso</strong>
+          <p style="font-size: 0.9rem;">Componentes base compartilhados</p>
+        </div>
+        <div style="background: white; padding: 1rem; border-radius: 8px;">
+          <strong>🔧 Modularidade</strong>
+          <p style="font-size: 0.9rem;">Funcionalidades ativadas sob demanda</p>
+        </div>
+        <div style="background: white; padding: 1rem; border-radius: 8px;">
+          <strong>🎨 Personalização</strong>
+          <p style="font-size: 0.9rem;">Interface adaptável às necessidades</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>🎪 Matriz de Variabilidade</h2>
+    <p>Explore como cada tipo de usuário tem uma experiência única:</p>
+    
+    <div class="variability-matrix">
+      <div class="interface-preview guest">
+        <div class="user-avatar" style="background: #6b7280;">👤</div>
+        <h3>Visitante</h3>
+        <p><strong>Interface Minimalista</strong></p>
+        <div class="feature-grid">
+          <div class="feature-tag">Catálogo</div>
+          <div class="feature-tag">Busca</div>
+          <div class="feature-tag">Filtros</div>
+        </div>
+        <p style="font-size: 0.9rem; color: #666; margin-top: 1rem;">
+          Experiência focada em descoberta de produtos sem distrações
+        </p>
+        <button class="btn" onclick="switchToUser('guest')" style="width: 100%; margin-top: 1rem;">
+          Testar Interface
+        </button>
+      </div>
+
+      <div class="interface-preview customer">
+        <div class="user-avatar" style="background: #3b82f6;">🛒</div>
+        <h3>Cliente</h3>
+        <p><strong>Interface de E-commerce Completa</strong></p>
+        <div class="feature-grid">
+          <div class="feature-tag">Carrinho</div>
+          <div class="feature-tag">Wishlist</div>
+          <div class="feature-tag">Pedidos</div>
+          <div class="feature-tag">Perfil</div>
+          <div class="feature-tag">Reviews</div>
+        </div>
+        <p style="font-size: 0.9rem; color: #666; margin-top: 1rem;">
+          Experiência completa de compra com histórico e recomendações
+        </p>
+        <button class="btn" onclick="switchToUser('customer')" style="width: 100%; margin-top: 1rem;">
+          Testar Interface
+        </button>
+      </div>
+
+      <div class="interface-preview vip">
+        <div class="user-avatar" style="background: #fbbf24;">
+          👑
+          <span class="exclusive-indicator">VIP</span>
+        </div>
+        <h3>Cliente VIP</h3>
+        <p><strong>Interface Premium Exclusiva</strong></p>
+        <div class="feature-grid">
+          <div class="feature-tag exclusive">Acesso Antecipado</div>
+          <div class="feature-tag exclusive">Concierge</div>
+          <div class="feature-tag exclusive">Descontos VIP</div>
+          <div class="feature-tag">Frete Grátis</div>
+          <div class="feature-tag exclusive">Suporte 24h</div>
+        </div>
+        <p style="font-size: 0.9rem; color: #666; margin-top: 1rem;">
+          Experiência de luxo com benefícios exclusivos e atendimento personalizado
+        </p>
+        <button class="btn" onclick="switchToUser('premium_customer')" style="width: 100%; margin-top: 1rem;">
+          Testar Interface
+        </button>
+      </div>
+
+      <div class="interface-preview brecho">
+        <div class="user-avatar" style="background: #8b5cf6;">
+          👘
+          <span class="exclusive-indicator">VINTAGE</span>
+        </div>
+        <h3>Brechó Especializado</h3>
+        <p><strong>Interface Vintage com IA</strong></p>
+        <div class="feature-grid">
+          <div class="feature-tag exclusive">Autenticação IA</div>
+          <div class="feature-tag exclusive">Precificação Vintage</div>
+          <div class="feature-tag exclusive">Análise de Raridade</div>
+          <div class="feature-tag exclusive">Certificados</div>
+          <div class="feature-tag">Controle Qualidade</div>
+        </div>
+        <p style="font-size: 0.9rem; color: #666; margin-top: 1rem;">
+          Sistema exclusivo de autenticação e precificação para peças vintage
+        </p>
+        <button class="btn" onclick="switchToUser('brecho')" style="width: 100%; margin-top: 1rem;">
+          Testar Interface
+        </button>
+      </div>
+
+      <div class="interface-preview grife">
+        <div class="user-avatar" style="background: #ec4899;">
+          💎
+          <span class="exclusive-indicator">LUXURY</span>
+        </div>
+        <h3>Grife de Luxo</h3>
+        <p><strong>Brand Studio Completo</strong></p>
+        <div class="feature-grid">
+          <div class="feature-tag exclusive">Design Studio</div>
+          <div class="feature-tag exclusive">Rede Influencers</div>
+          <div class="feature-tag exclusive">Drops Exclusivos</div>
+          <div class="feature-tag exclusive">Analytics Marca</div>
+          <div class="feature-tag">Gestão Coleções</div>
+        </div>
+        <p style="font-size: 0.9rem; color: #666; margin-top: 1rem;">
+          Ferramentas profissionais para gestão de marca e lançamentos exclusivos
+        </p>
+        <button class="btn" onclick="switchToUser('grife')" style="width: 100%; margin-top: 1rem;">
+          Testar Interface
+        </button>
+      </div>
+
+      <div class="interface-preview consultant">
+        <div class="user-avatar" style="background: #06b6d4;">
+          👗
+          <span class="exclusive-indicator">AI</span>
+        </div>
+        <h3>Consultor de Moda</h3>
+        <p><strong>IA de Estilo Personalizado</strong></p>
+        <div class="feature-grid">
+          <div class="feature-tag exclusive">Engine IA Estilo</div>
+          <div class="feature-tag exclusive">Análise Corporal</div>
+          <div class="feature-tag exclusive">Cores Sazonais</div>
+          <div class="feature-tag exclusive">Carteira Clientes</div>
+          <div class="feature-tag">Tendências</div>
+        </div>
+        <p style="font-size: 0.9rem; color: #666; margin-top: 1rem;">
+          Inteligência artificial para análise de estilo e recomendações personalizadas
+        </p>
+        <button class="btn" onclick="switchToUser('fashion_consultant')" style="width: 100%; margin-top: 1rem;">
+          Testar Interface
+        </button>
+      </div>
+
+      <div class="interface-preview auditor">
+        <div class="user-avatar" style="background: #22c55e;">
+          🌱
+          <span class="exclusive-indicator">ECO</span>
+        </div>
+        <h3>Auditor Sustentável</h3>
+        <p><strong>Análise Ambiental Científica</strong></p>
+        <div class="feature-grid">
+          <div class="feature-tag exclusive">Calc. Carbono</div>
+          <div class="feature-tag exclusive">LCA Analysis</div>
+          <div class="feature-tag exclusive">Certificações</div>
+          <div class="feature-tag exclusive">Relatórios ISO</div>
+          <div class="feature-tag">Auditoria</div>
+        </div>
+        <p style="font-size: 0.9rem; color: #666; margin-top: 1rem;">
+          Ferramentas científicas para análise de impacto ambiental e certificação
+        </p>
+        <button class="btn" onclick="switchToUser('sustainability_auditor')" style="width: 100%; margin-top: 1rem;">
+          Testar Interface
+        </button>
+      </div>
+
+      <div class="interface-preview distributor">
+        <div class="user-avatar" style="background: #f59e0b;">
+          📦
+          <span class="exclusive-indicator">BULK</span>
+        </div>
+        <h3>Distribuidor</h3>
+        <p><strong>Operações Logísticas em Massa</strong></p>
+        <div class="feature-grid">
+          <div class="feature-tag exclusive">Pedidos Massa</div>
+          <div class="feature-tag exclusive">Multi-Armazém</div>
+          <div class="feature-tag exclusive">Otimização IA</div>
+          <div class="feature-tag exclusive">Preços Atacado</div>
+          <div class="feature-tag">Analytics B2B</div>
+        </div>
+        <p style="font-size: 0.9rem; color: #666; margin-top: 1rem;">
+          Sistema corporativo para gestão de distribuição e logística avançada
+        </p>
+        <button class="btn" onclick="switchToUser('distributor')" style="width: 100%; margin-top: 1rem;">
+          Testar Interface
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="reuse-visualization">
+    <h2>♻️ Arquitetura de Reuso Inteligente</h2>
+    <p>Como conseguimos máxima variabilidade com mínima duplicação de código:</p>
+    
+    <div class="reuse-layer base">
+      <strong>Camada Base (100% Reutilizada)</strong>
+      <p>Sistema de autenticação, carrinho, CSS framework, componentes UI básicos</p>
+      <span class="reuse-percentage" style="color: #22c55e;">100%</span>
+    </div>
+    
+    <div class="reuse-layer shared">
+      <strong>Camada Compartilhada (85% Reutilizada)</strong>
+      <p>Gestão de produtos, sistema de pedidos, analytics básico, navegação</p>
+      <span class="reuse-percentage" style="color: #3b82f6;">85%</span>
+    </div>
+    
+    <div class="reuse-layer specialized">
+      <strong>Camada Especializada (60% Reutilizada)</strong>
+      <p>Dashboards específicos, módulos avançados, interfaces customizadas</p>
+      <span class="reuse-percentage" style="color: #f59e0b;">60%</span>
+    </div>
+    
+    <div class="reuse-layer exclusive">
+      <strong>Camada Exclusiva (0% Reutilizada)</strong>
+      <p>Funcionalidades únicas: IA vintage, engine de estilo, auditoria ambiental</p>
+      <span class="reuse-percentage" style="color: #ec4899;">0%</span>
+    </div>
+  </section>
+
+  <section class="demo-controls">
+    <h2>🎮 Demonstração Interativa</h2>
+    <p>Teste rapidamente diferentes tipos de usuário para ver a variabilidade em ação:</p>
+    
+    <div class="quick-switch">
+      <div class="switch-btn" onclick="quickDemo('guest')">
+        <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">👤</div>
+        <strong>Visitante</strong>
+      </div>
+      <div class="switch-btn" onclick="quickDemo('customer')">
+        <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🛒</div>
+        <strong>Cliente</strong>
+      </div>
+      <div class="switch-btn" onclick="quickDemo('premium_customer')">
+        <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">👑</div>
+        <strong>VIP</strong>
+      </div>
+      <div class="switch-btn" onclick="quickDemo('brecho')">
+        <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">👘</div>
+        <strong>Brechó</strong>
+      </div>
+      <div class="switch-btn" onclick="quickDemo('grife')">
+        <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">💎</div>
+        <strong>Grife</strong>
+      </div>
+      <div class="switch-btn" onclick="quickDemo('fashion_consultant')">
+        <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">👗</div>
+        <strong>Consultor</strong>
+      </div>
+      <div class="switch-btn" onclick="quickDemo('sustainability_auditor')">
+        <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🌱</div>
+        <strong>Auditor</strong>
+      </div>
+      <div class="switch-btn" onclick="quickDemo('distributor')">
+        <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📦</div>
+        <strong>Distribuidor</strong>
+      </div>
+    </div>
+    
+    <div style="margin-top: 2rem;">
+      <button class="btn" onclick="showVariabilityComparison()" style="font-size: 1.1rem; padding: 1rem 2rem;">
+        📊 Ver Comparação Lado a Lado
+      </button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>⭐ Funcionalidade Exclusiva Destacada</h2>
+    <div style="background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%); border: 3px solid #f59e0b; border-radius: 16px; padding: 2rem; margin: 2rem 0;">
+      <h3>🔬 Sistema de Autenticação Vintage com IA</h3>
+      <p><strong>Exclusivo para Brechós Especializados</strong></p>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 2rem 0;">
+        <div>
+          <h4>🎯 Funcionalidades Únicas:</h4>
+          <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+            <li>Análise de autenticidade por IA</li>
+            <li>Verificação de materiais e costuras</li>
+            <li>Análise de etiquetas e seriais</li>
+            <li>Precificação baseada em raridade histórica</li>
+            <li>Geração de certificados de autenticidade</li>
+            <li>Base de dados de peças conhecidas</li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4>🧠 Tecnologia IA:</h4>
+          <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+            <li>Reconhecimento de padrões visuais</li>
+            <li>Análise de desgaste natural vs artificial</li>
+            <li>Comparação com banco de dados histórico</li>
+            <li>Machine learning para detecção de falsificações</li>
+            <li>Análise de materiais por espectroscopia</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div style="text-align: center; margin-top: 2rem;">
+        <a href="vintage-authentication.html" class="btn" style="font-size: 1.1rem; padding: 1rem 2rem;">
+          🔍 Acessar Sistema de Autenticação
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>📈 Métricas do Sistema</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 2rem; text-align: center; margin: 2rem 0;">
+      <div style="background: #f0f9ff; padding: 2rem; border-radius: 12px;">
+        <div style="font-size: 3rem; font-weight: bold; color: #6366f1;">8</div>
+        <div style="font-weight: bold;">Tipos de Usuário</div>
+        <div style="font-size: 0.8rem; color: #666;">Cada um com interface única</div>
+      </div>
+      <div style="background: #f0fdf4; padding: 2rem; border-radius: 12px;">
+        <div style="font-size: 3rem; font-weight: bold; color: #22c55e;">23</div>
+        <div style="font-weight: bold;">Módulos Únicos</div>
+        <div style="font-size: 0.8rem; color: #666;">Funcionalidades especializadas</div>
+      </div>
+      <div style="background: #fef3c7; padding: 2rem; border-radius: 12px;">
+        <div style="font-size: 3rem; font-weight: bold; color: #f59e0b;">6</div>
+        <div style="font-weight: bold;">Interfaces Base</div>
+        <div style="font-size: 0.8rem; color: #666;">Layouts completamente diferentes</div>
+      </div>
+      <div style="background: #fdf2f8; padding: 2rem; border-radius: 12px;">
+        <div style="font-size: 3rem; font-weight: bold; color: #ec4899;">∞</div>
+        <div style="font-weight: bold;">Personalizações</div>
+        <div style="font-size: 0.8rem; color: #666;">Customização ilimitada</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="access-control-system.js"></script>
+<script>
+function switchToUser(userType) {
+  AccessControlSystem.setUserType(userType);
+  alert(`Agora você está logado como: ${AccessControlSystem.getCurrentUser().name}\n\nNavegue pelo sistema para ver as diferenças na interface!`);
+  window.location.href = 'index.html';
+}
+
+function quickDemo(userType) {
+  // Destacar botão selecionado
+  document.querySelectorAll('.switch-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.closest('.switch-btn').classList.add('active');
+  
+  // Mostrar preview rápido
+  const user = AccessControlSystem.userHierarchy[userType];
+  const preview = `
+    <div style="background: white; border: 2px solid ${user.color}; border-radius: 8px; padding: 1rem; margin-top: 1rem;">
+      <strong>${user.name}</strong><br>
+      <small>Nível ${user.level} • ${user.modules.length} módulos • ${user.features.length} funcionalidades</small>
+    </div>
+  `;
+  
+  // Remover preview anterior
+  const existingPreview = document.getElementById('quickPreview');
+  if (existingPreview) existingPreview.remove();
+  
+  // Adicionar novo preview
+  const previewDiv = document.createElement('div');
+  previewDiv.id = 'quickPreview';
+  previewDiv.innerHTML = preview;
+  event.target.closest('.demo-controls').appendChild(previewDiv);
+}
+
+function showVariabilityComparison() {
+  window.open('variability-comparison.html', '_blank');
+}
+
+// Atualizar display do usuário atual
+document.addEventListener('DOMContentLoaded', () => {
+  const currentUser = AccessControlSystem.getCurrentUser();
+  const display = document.getElementById('currentUserDisplay');
+  display.textContent = currentUser.name.toUpperCase();
+  display.style.background = currentUser.color;
+  display.style.color = 'white';
+  display.style.padding = '0.3rem 0.8rem';
+  display.style.borderRadius = '20px';
+  display.style.fontWeight = 'bold';
+});
+</script>
+</body>
+</html>

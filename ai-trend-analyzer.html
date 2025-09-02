@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Analisador de Tendências IA - EcoGear</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .trend-analyzer-header {
+      background: linear-gradient(135deg, #06b6d4 0%, #0891b2 50%, #0e7490 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 16px;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .trend-analyzer-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M10,50 Q30,10 50,50 T90,50" stroke="rgba(255,255,255,0.1)" stroke-width="2" fill="none"/></svg>') repeat;
+      animation: trendWave 15s ease-in-out infinite;
+    }
+
+    @keyframes trendWave {
+      0%, 100% { opacity: 0.3; transform: translateX(0); }
+      50% { opacity: 0.6; transform: translateX(20px); }
+    }
+
+    .trend-dashboard {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+
+    .trend-analysis-panel {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+
+    .trend-insights-panel {
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%);
+      border-radius: 16px;
+      padding: 2rem;
+      border: 2px solid #06b6d4;
+    }
+
+    .trend-chart {
+      width: 100%;
+      height: 300px;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      border-radius: 12px;
+      margin: 1rem 0;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+    }
+
+    .trend-line {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      height: 2px;
+      background: #06b6d4;
+      border-radius: 1px;
+    }
+
+    .trend-point {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: #06b6d4;
+      border-radius: 50%;
+      border: 3px solid white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .trend-point:hover {
+      transform: scale(1.3);
+    }
+
+    .trend-category {
+      background: white;
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 0.5rem 0;
+      border-left: 4px solid #06b6d4;
+      transition: all 0.2s;
+    }
+
+    .trend-category:hover {
+      transform: translateX(5px);
+      box-shadow: 0 4px 12px rgba(6, 182, 212, 0.2);
+    }
+
+    .trend-indicator {
+      display: inline-block;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      margin: 0.2rem;
+    }
+
+    .trend-hot { background: #fecaca; color: #991b1b; animation: glow 2s infinite; }
+    .trend-rising { background: #fed7aa; color: #9a3412; }
+    .trend-stable { background: #d1fae5; color: #065f46; }
+    .trend-declining { background: #e5e7eb; color: #374151; }
+
+    @keyframes glow {
+      0%, 100% { box-shadow: 0 0 5px rgba(239, 68, 68, 0.5); }
+      50% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.8); }
+    }
+
+    .ai-prediction {
+      background: linear-gradient(135deg, #f3e8ff 0%, #e0e7ff 100%);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      border: 2px solid #8b5cf6;
+    }
+
+    .confidence-meter {
+      width: 100%;
+      height: 8px;
+      background: #e5e7eb;
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 0.5rem 0;
+    }
+
+    .confidence-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ef4444 0%, #fbbf24 50%, #22c55e 100%);
+      transition: width 0.5s ease;
+    }
+
+    .social-listening {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+    }
+
+    .social-mention {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.8rem;
+      background: white;
+      border-radius: 8px;
+      margin: 0.5rem 0;
+      border-left: 3px solid #06b6d4;
+    }
+
+    .platform-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 0.8rem;
+    }
+
+    .instagram { background: #e4405f; }
+    .tiktok { background: #000; }
+    .pinterest { background: #bd081c; }
+    .twitter { background: #1da1f2; }
+  </style>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="index.html">EcoGear</a>
+  <nav>
+    <a href="shop-grid.html">Loja</a>
+    <a href="consultant-dashboard.html">Dashboard</a>
+    <a href="ai-style-engine.html">IA de Estilo</a>
+    <a href="ai-trend-analyzer.html">Análise de Tendências</a>
+  </nav>
+  <div class="top-actions">
+    <span style="background: #06b6d4; color: white; padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: bold;">CONSULTOR IA</span>
+  </div>
+</header>
+
+<main class="container">
+  <div class="trend-analyzer-header">
+    <h1>📈 Analisador de Tendências IA</h1>
+    <p>Funcionalidade EXCLUSIVA para Consultores de Moda</p>
+    <div style="margin-top: 1rem; font-size: 1.1rem; position: relative; z-index: 1;">
+      <strong>Análise em tempo real de tendências globais com Inteligência Artificial</strong>
+    </div>
+  </div>
+
+  <div class="trend-dashboard">
+    <div class="trend-analysis-panel">
+      <h3>🔍 Análise de Tendências Globais</h3>
+      
+      <div class="trend-chart">
+        <div style="position: absolute; top: 20px; left: 20px; font-weight: bold; color: #06b6d4;">
+          Popularidade das Tendências (Últimos 30 dias)
+        </div>
+        
+        <!-- Pontos de dados simulados -->
+        <div class="trend-point" style="bottom: 180px; left: 15%;" title="Cores Terrosas: +340%"></div>
+        <div class="trend-point" style="bottom: 120px; left: 30%;" title="Vintage 90s: +180%"></div>
+        <div class="trend-point" style="bottom: 200px; left: 45%;" title="Sustentabilidade: +420%"></div>
+        <div class="trend-point" style="bottom: 90px; left: 60%;" title="Minimalismo: +90%"></div>
+        <div class="trend-point" style="bottom: 160px; left: 75%;" title="Oversized: +250%"></div>
+        <div class="trend-point" style="bottom: 220px; left: 90%;" title="Upcycling: +380%"></div>
+        
+        <div style="position: absolute; bottom: 10px; left: 20px; right: 20px; display: flex; justify-content: space-between; font-size: 0.8rem; color: #666;">
+          <span>Jan</span><span>Fev</span><span>Mar</span><span>Abr</span><span>Mai</span><span>Jun</span>
+        </div>
+      </div>
+
+      <div style="margin-top: 2rem;">
+        <h4>🔥 Tendências em Alta</h4>
+        <div class="trend-category">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong>Cores Terrosas</strong>
+              <span class="trend-indicator trend-hot">🔥 QUENTE</span>
+            </div>
+            <div style="font-weight: bold; color: #22c55e;">+340%</div>
+          </div>
+          <div class="confidence-meter">
+            <div class="confidence-fill" style="width: 94%;"></div>
+          </div>
+          <small>Confiança IA: 94% • Previsão: Continua em alta por 3 meses</small>
+        </div>
+
+        <div class="trend-category">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong>Upcycling & Reciclagem</strong>
+              <span class="trend-indicator trend-hot">🔥 QUENTE</span>
+            </div>
+            <div style="font-weight: bold; color: #22c55e;">+380%</div>
+          </div>
+          <div class="confidence-meter">
+            <div class="confidence-fill" style="width: 91%;"></div>
+          </div>
+          <small>Confiança IA: 91% • Previsão: Crescimento sustentado</small>
+        </div>
+
+        <div class="trend-category">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong>Silhuetas Oversized</strong>
+              <span class="trend-indicator trend-rising">📈 SUBINDO</span>
+            </div>
+            <div style="font-weight: bold; color: #22c55e;">+250%</div>
+          </div>
+          <div class="confidence-meter">
+            <div class="confidence-fill" style="width: 87%;"></div>
+          </div>
+          <small>Confiança IA: 87% • Previsão: Pico em 2 meses</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="trend-insights-panel">
+      <h3>🧠 Insights da IA</h3>
+      
+      <div class="ai-prediction">
+        <h4>🔮 Previsão para Próxima Semana</h4>
+        <p><strong>Tendência Emergente:</strong></p>
+        <p>"Aesthetic Cottagecore" com elementos naturais e texturas orgânicas</p>
+        <div class="confidence-meter">
+          <div class="confidence-fill" style="width: 78%;"></div>
+        </div>
+        <small>Confiança: 78%</small>
+      </div>
+
+      <div style="margin-top: 2rem;">
+        <h4>📱 Social Listening</h4>
+        <div class="social-listening">
+          <div class="social-mention">
+            <div class="platform-icon instagram">IG</div>
+            <div>
+              <strong>+2.3M menções</strong><br>
+              <small>#sustainablefashion</small>
+            </div>
+          </div>
+          <div class="social-mention">
+            <div class="platform-icon tiktok">TT</div>
+            <div>
+              <strong>+890K vídeos</strong><br>
+              <small>#thrifting</small>
+            </div>
+          </div>
+          <div class="social-mention">
+            <div class="platform-icon pinterest">PT</div>
+            <div>
+              <strong>+1.5M pins</strong><br>
+              <small>Earth tones outfit</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 2rem;">
+        <h4>🎯 Recomendações IA</h4>
+        <div style="background: white; padding: 1rem; border-radius: 8px;">
+          <p style="font-size: 0.9rem;">
+            <strong>Para seus clientes:</strong><br>
+            Aposte em peças em tons terrosos, especialmente marrom chocolate e bege quente. 
+            Combine com texturas naturais como linho e algodão orgânico.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="card">
+    <h3>🌍 Análise Global de Mercado</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin: 2rem 0;">
+      <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 12px; text-align: center;">
+        <div style="font-size: 2rem; font-weight: bold; color: #06b6d4;">127</div>
+        <div>Países Analisados</div>
+        <div style="font-size: 0.8rem; color: #666;">Dados em tempo real</div>
+      </div>
+      <div style="background: #f0fdf4; padding: 1.5rem; border-radius: 12px; text-align: center;">
+        <div style="font-size: 2rem; font-weight: bold; color: #22c55e;">50M+</div>
+        <div>Posts Analisados</div>
+        <div style="font-size: 0.8rem; color: #666;">Últimas 24h</div>
+      </div>
+      <div style="background: #fef3c7; padding: 1.5rem; border-radius: 12px; text-align: center;">
+        <div style="font-size: 2rem; font-weight: bold; color: #f59e0b;">2.3K</div>
+        <div>Influencers Monitorados</div>
+        <div style="font-size: 0.8rem; color: #666;">Top fashion accounts</div>
+      </div>
+      <div style="background: #fdf2f8; padding: 1.5rem; border-radius: 12px; text-align: center;">
+        <div style="font-size: 2rem; font-weight: bold; color: #ec4899;">94%</div>
+        <div>Precisão das Previsões</div>
+        <div style="font-size: 0.8rem; color: #666;">Últimos 6 meses</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>🎨 Análise de Cores e Materiais</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+      <div>
+        <h4>🌈 Paleta de Cores Trending</h4>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin: 1rem 0;">
+          <div style="background: #8B4513; height: 60px; border-radius: 8px; position: relative;">
+            <span style="position: absolute; bottom: 5px; left: 5px; color: white; font-size: 0.7rem; font-weight: bold;">+340%</span>
+          </div>
+          <div style="background: #D2691E; height: 60px; border-radius: 8px; position: relative;">
+            <span style="position: absolute; bottom: 5px; left: 5px; color: white; font-size: 0.7rem; font-weight: bold;">+280%</span>
+          </div>
+          <div style="background: #F4A460; height: 60px; border-radius: 8px; position: relative;">
+            <span style="position: absolute; bottom: 5px; left: 5px; color: white; font-size: 0.7rem; font-weight: bold;">+220%</span>
+          </div>
+          <div style="background: #DEB887; height: 60px; border-radius: 8px; position: relative;">
+            <span style="position: absolute; bottom: 5px; left: 5px; color: #333; font-size: 0.7rem; font-weight: bold;">+190%</span>
+          </div>
+        </div>
+      </div>
+      
+      <div>
+        <h4>🧵 Materiais em Alta</h4>
+        <div style="margin: 1rem 0;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span>Linho Orgânico</span>
+            <span style="font-weight: bold; color: #22c55e;">+420%</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span>Algodão Reciclado</span>
+            <span style="font-weight: bold; color: #22c55e;">+380%</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span>Tencel/Lyocell</span>
+            <span style="font-weight: bold; color: #22c55e;">+290%</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span>Hemp (Cânhamo)</span>
+            <span style="font-weight: bold; color: #fbbf24;">+180%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>🎯 Recomendações Personalizadas para Consultores</h3>
+    <div style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); padding: 2rem; border-radius: 12px; margin: 1rem 0;">
+      <h4>💡 Estratégias Recomendadas:</h4>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin: 1.5rem 0;">
+        <div style="background: white; padding: 1rem; border-radius: 8px;">
+          <strong>🌍 Sustentabilidade</strong>
+          <p style="font-size: 0.9rem; margin-top: 0.5rem;">
+            Foque em peças eco-friendly. Tendência crescente de 380% em buscas por moda sustentável.
+          </p>
+        </div>
+        <div style="background: white; padding: 1rem; border-radius: 8px;">
+          <strong>🎨 Cores Terrosas</strong>
+          <p style="font-size: 0.9rem; margin-top: 0.5rem;">
+            Marrom chocolate, bege e terracota são as cores do momento. Crescimento de 340%.
+          </p>
+        </div>
+        <div style="background: white; padding: 1rem; border-radius: 8px;">
+          <strong>👗 Silhuetas</strong>
+          <p style="font-size: 0.9rem; margin-top: 0.5rem;">
+            Oversized e comfort wear continuam em alta. Ideal para o público pós-pandemia.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="script.js"></script>
+<script src="access-control-system.js"></script>
+<script>
+// Verificação de acesso exclusivo para consultores
+if (!AccessControlSystem.hasExclusiveFeature('ai_style_engine')) {
+  document.body.innerHTML = `
+    <header class="topbar">
+      <a class="brand" href="index.html">EcoGear</a>
+    </header>
+    <main class="container">
+      <div class="card" style="text-align: center; padding: 3rem;">
+        <h2>🔒 Funcionalidade Exclusiva</h2>
+        <p>O <strong>Analisador de Tendências IA</strong> é exclusivo para <strong>Consultores de Moda</strong> certificados.</p>
+        <p>Esta ferramenta utiliza inteligência artificial para análise de tendências globais em tempo real.</p>
+        <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; margin: 2rem 0;">
+          <h4>Funcionalidades Exclusivas:</h4>
+          <ul style="text-align: left; margin: 1rem 0;">
+            <li>Análise de 50M+ posts em tempo real</li>
+            <li>Previsões baseadas em machine learning</li>
+            <li>Social listening de 127 países</li>
+            <li>Monitoramento de 2.3K influencers</li>
+            <li>Análise de cores e materiais trending</li>
+          </ul>
+        </div>
+        <a href="user-type-selector.html" class="btn" style="margin-top: 1rem;">Testar como Consultor</a>
+        <a href="index.html" class="btn alt" style="margin-top: 0.5rem;">Voltar ao Início</a>
+      </div>
+    </main>
+  `;
+}
+
+// Animação dos pontos de tendência
+document.querySelectorAll('.trend-point').forEach((point, index) => {
+  point.style.animationDelay = `${index * 0.2}s`;
+  point.style.animation = 'trendPulse 3s ease-in-out infinite';
+});
+
+// Adicionar CSS para animação
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes trendPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+  }
+`;
+document.head.appendChild(style);
+</script>
+</body>
+</html>
