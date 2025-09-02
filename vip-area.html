@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Área VIP - EcoGear</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .vip-header {
+      background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+      color: #111;
+      padding: 2rem;
+      border-radius: 16px;
+      text-align: center;
+      margin-bottom: 2rem;
+      box-shadow: 0 8px 32px rgba(255, 215, 0, 0.3);
+    }
+
+    .vip-benefits {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .benefit-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      text-align: center;
+      transition: transform 0.3s;
+    }
+
+    .benefit-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .early-access {
+      border: 2px solid #ffd700;
+      background: #fffbf0;
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin: 1rem 0;
+    }
+
+    .vip-concierge {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+
+    .chat-bubble {
+      background: #667eea;
+      color: white;
+      padding: 1rem;
+      border-radius: 20px 20px 20px 5px;
+      margin: 0.5rem 0;
+      max-width: 70%;
+    }
+
+    .chat-bubble.user {
+      background: #e9ecef;
+      color: #111;
+      border-radius: 20px 20px 5px 20px;
+      margin-left: auto;
+    }
+  </style>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="index.html">EcoGear</a>
+  <nav>
+    <a href="shop-grid.html">Loja</a>
+    <a href="vip-area.html">Área VIP</a>
+  </nav>
+  <div class="top-actions">
+    <span style="background: #ffd700; color: #111; padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: bold;">VIP</span>
+    <a class="cart" href="cart.html">Carrinho (<span id="cartCount">0</span>)</a>
+  </div>
+</header>
+
+<main class="container">
+  <div class="vip-header">
+    <h1>👑 Área VIP Exclusiva</h1>
+    <p>Bem-vindo(a) ao seu espaço premium com benefícios exclusivos</p>
+  </div>
+
+  <div class="vip-benefits">
+    <div class="benefit-card">
+      <h3>🚀 Acesso Antecipado</h3>
+      <p>Veja e compre novos produtos 48h antes do lançamento público</p>
+    </div>
+    <div class="benefit-card">
+      <h3>🎁 Descontos Exclusivos</h3>
+      <p>Até 30% de desconto em produtos selecionados</p>
+    </div>
+    <div class="benefit-card">
+      <h3>📞 Suporte Premium</h3>
+      <p>Atendimento personalizado via chat ou telefone</p>
+    </div>
+    <div class="benefit-card">
+      <h3>📦 Frete Grátis</h3>
+      <p>Entrega gratuita em todas as suas compras</p>
+    </div>
+  </div>
+
+  <section class="early-access">
+    <h3>⚡ Pré-Lançamentos Disponíveis</h3>
+    <div id="earlyAccessProducts">
+      <div style="display: flex; gap: 1rem; align-items: center; margin: 1rem 0; padding: 1rem; background: white; border-radius: 8px;">
+        <img src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=80&h=80&fit=crop" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;">
+        <div style="flex: 1;">
+          <strong>Coleção Primavera Exclusiva</strong><br>
+          <small>Lançamento público: 20/01/2025</small>
+        </div>
+        <button class="btn">Ver Coleção</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="vip-concierge">
+    <h3>💬 Concierge VIP</h3>
+    <p>Converse com nosso especialista em moda sustentável</p>
+    
+    <div id="chatArea" style="height: 200px; overflow-y: auto; margin: 1rem 0; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+      <div class="chat-bubble">
+        Olá! Sou sua consultora pessoal. Como posso ajudar você hoje?
+      </div>
+    </div>
+    
+    <div style="display: flex; gap: 0.5rem;">
+      <input type="text" id="chatInput" placeholder="Digite sua mensagem..." style="flex: 1; padding: 0.8rem; border-radius: 20px; border: 1px solid #ddd;">
+      <button class="btn" id="sendChatBtn" style="border-radius: 20px; padding: 0.8rem 1.5rem;">Enviar</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>📈 Seu Histórico VIP</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; text-align: center;">
+      <div>
+        <div style="font-size: 1.8rem; font-weight: bold; color: #667eea;">R$ 2.847</div>
+        <div style="color: #666;">Total Economizado</div>
+      </div>
+      <div>
+        <div style="font-size: 1.8rem; font-weight: bold; color: #28a745;">23</div>
+        <div style="color: #666;">Compras VIP</div>
+      </div>
+      <div>
+        <div style="font-size: 1.8rem; font-weight: bold; color: #ffc107;">7</div>
+        <div style="color: #666;">Pré-lançamentos</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="script.js"></script>
+<script src="user-manager.js"></script>
+<script>
+// Verificação de acesso VIP
+if (UserManager.getUserType() !== 'premium_customer') {
+  document.body.innerHTML = `
+    <header class="topbar">
+      <a class="brand" href="index.html">EcoGear</a>
+    </header>
+    <main class="container">
+      <div class="card" style="text-align: center; padding: 3rem;">
+        <h2>👑 Área VIP</h2>
+        <p>Esta área é exclusiva para clientes VIP.</p>
+        <p>Faça upgrade da sua conta para acessar benefícios exclusivos!</p>
+        <button class="btn" style="margin-top: 1rem;" onclick="alert('Funcionalidade de upgrade simulada!')">
+          Tornar-se VIP
+        </button>
+        <a href="index.html" class="btn alt" style="margin-top: 0.5rem;">Voltar ao Início</a>
+      </div>
+    </main>
+  `;
+}
+
+document.getElementById('sendChatBtn').onclick = function() {
+  const input = document.getElementById('chatInput');
+  const message = input.value.trim();
+  if (!message) return;
+
+  const chatArea = document.getElementById('chatArea');
+  
+  // Adicionar mensagem do usuário
+  const userBubble = document.createElement('div');
+  userBubble.className = 'chat-bubble user';
+  userBubble.textContent = message;
+  chatArea.appendChild(userBubble);
+
+  // Simular resposta do concierge
+  setTimeout(() => {
+    const responses = [
+      'Perfeito! Vou verificar isso para você.',
+      'Que ótima escolha! Posso sugerir algumas opções similares.',
+      'Claro! Vou encaminhar sua solicitação para nossa equipe especializada.',
+      'Excelente pergunta! Deixe-me buscar as melhores opções para você.'
+    ];
+    const response = responses[Math.floor(Math.random() * responses.length)];
+    
+    const botBubble = document.createElement('div');
+    botBubble.className = 'chat-bubble';
+    botBubble.textContent = response;
+    chatArea.appendChild(botBubble);
+    
+    chatArea.scrollTop = chatArea.scrollHeight;
+  }, 1000);
+
+  input.value = '';
+  chatArea.scrollTop = chatArea.scrollHeight;
+};
+
+document.getElementById('chatInput').onkeypress = function(e) {
+  if (e.key === 'Enter') {
+    document.getElementById('sendChatBtn').click();
+  }
+};
+</script>
+</body>
+</html>

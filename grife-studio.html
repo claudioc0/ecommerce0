@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Brand Studio - EcoGear</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .brand-studio {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+
+    .design-panel {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+
+    .collection-manager {
+      background: #fff;
+      border: 2px solid #f0f0f0;
+      border-radius: 16px;
+      padding: 2rem;
+    }
+
+    .color-palette {
+      display: flex;
+      gap: 0.5rem;
+      margin: 1rem 0;
+    }
+
+    .color-swatch {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .color-swatch:hover {
+      border-color: #fff;
+      transform: scale(1.1);
+    }
+
+    .exclusive-badge {
+      background: linear-gradient(45deg, #ff6b6b, #feca57);
+      color: white;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      display: inline-block;
+      margin-left: 0.5rem;
+    }
+
+    .launch-timeline {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+    }
+
+    .timeline-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      padding: 0.8rem;
+      background: white;
+      border-radius: 8px;
+      border-left: 4px solid #667eea;
+    }
+  </style>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="index.html">EcoGear</a>
+  <nav>
+    <a href="shop-grid.html">Loja</a>
+    <a href="seller-dashboard.html">Dashboard</a>
+    <a href="grife-studio.html">Brand Studio</a>
+  </nav>
+  <div class="top-actions">
+    <span class="exclusive-badge">GRIFE</span>
+    <a class="cart" href="cart.html">Carrinho (<span id="cartCount">0</span>)</a>
+  </div>
+</header>
+
+<main class="container">
+  <h2>Brand Studio <span class="exclusive-badge">EXCLUSIVO</span></h2>
+  <p>Módulo exclusivo para grifes - Gerencie sua marca, coleções e lançamentos exclusivos.</p>
+
+  <div class="brand-studio">
+    <div class="design-panel">
+      <h3>🎨 Design da Marca</h3>
+      <div>
+        <h4>Paleta de Cores</h4>
+        <div class="color-palette">
+          <div class="color-swatch" style="background: #667eea;" onclick="selectColor('#667eea')"></div>
+          <div class="color-swatch" style="background: #764ba2;" onclick="selectColor('#764ba2')"></div>
+          <div class="color-swatch" style="background: #f093fb;" onclick="selectColor('#f093fb')"></div>
+          <div class="color-swatch" style="background: #f5576c;" onclick="selectColor('#f5576c')"></div>
+          <div class="color-swatch" style="background: #4facfe;" onclick="selectColor('#4facfe')"></div>
+        </div>
+      </div>
+      
+      <div style="margin-top: 2rem;">
+        <h4>Logo da Marca</h4>
+        <div style="background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+          <input type="file" accept="image/*" style="color: white;">
+          <p style="margin-top: 0.5rem; font-size: 0.9rem;">Upload do logo (máx. 2MB)</p>
+        </div>
+      </div>
+
+      <button class="btn" style="background: white; color: #667eea; margin-top: 1rem;">
+        Aplicar Design
+      </button>
+    </div>
+
+    <div class="collection-manager">
+      <h3>📦 Gerenciar Coleções</h3>
+      
+      <div class="launch-timeline">
+        <h4>Timeline de Lançamentos</h4>
+        <div class="timeline-item">
+          <div style="width: 12px; height: 12px; background: #28a745; border-radius: 50%;"></div>
+          <div>
+            <strong>Coleção Verão 2025</strong><br>
+            <small>Lançamento: 15/01/2025</small>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div style="width: 12px; height: 12px; background: #ffc107; border-radius: 50%;"></div>
+          <div>
+            <strong>Edição Limitada Eco</strong><br>
+            <small>Pré-venda: 01/02/2025</small>
+          </div>
+        </div>
+      </div>
+
+      <form id="newCollectionForm">
+        <label>Nome da Coleção
+          <input type="text" placeholder="Ex: Primavera Sustentável 2025" required>
+        </label>
+        <label>Data de Lançamento
+          <input type="date" required>
+        </label>
+        <label>Tipo de Lançamento
+          <select>
+            <option>Coleção Regular</option>
+            <option>Edição Limitada</option>
+            <option>Pré-venda Exclusiva</option>
+            <option>Drop Surpresa</option>
+          </select>
+        </label>
+        <button class="btn" type="submit">Criar Coleção</button>
+      </form>
+    </div>
+  </div>
+
+  <section class="card">
+    <h3>🚀 Lançamentos Exclusivos</h3>
+    <div id="exclusiveReleases">
+      <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+        <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=80&h=80&fit=crop" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;">
+        <div style="flex: 1;">
+          <strong>Jaqueta Signature Limited</strong><br>
+          <small>Apenas 50 unidades • Pré-venda VIP</small>
+        </div>
+        <button class="btn alt">Gerenciar</button>
+      </div>
+    </div>
+    <button class="btn" id="createExclusiveBtn">+ Criar Lançamento Exclusivo</button>
+  </section>
+
+  <section class="card">
+    <h3>📊 Analytics da Marca</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+      <div style="text-align: center; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+        <div style="font-size: 2rem; font-weight: bold; color: #667eea;">847</div>
+        <div>Seguidores da Marca</div>
+      </div>
+      <div style="text-align: center; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+        <div style="font-size: 2rem; font-weight: bold; color: #28a745;">94%</div>
+        <div>Taxa de Satisfação</div>
+      </div>
+      <div style="text-align: center; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+        <div style="font-size: 2rem; font-weight: bold; color: #ffc107;">23</div>
+        <div>Produtos em Wishlist</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="script.js"></script>
+<script src="user-manager.js"></script>
+<script>
+// Verificação de acesso exclusivo para grifes
+if (UserManager.getUserType() !== 'grife') {
+  document.body.innerHTML = `
+    <header class="topbar">
+      <a class="brand" href="index.html">EcoGear</a>
+    </header>
+    <main class="container">
+      <div class="card" style="text-align: center; padding: 3rem;">
+        <h2>🔒 Acesso Restrito</h2>
+        <p>Este módulo é exclusivo para contas do tipo <strong>Grife</strong>.</p>
+        <p>Entre em contato para upgrade da sua conta.</p>
+        <a href="index.html" class="btn" style="margin-top: 1rem;">Voltar ao Início</a>
+      </div>
+    </main>
+  `;
+}
+
+function selectColor(color) {
+  document.querySelectorAll('.color-swatch').forEach(s => s.style.border = '3px solid transparent');
+  event.target.style.border = '3px solid white';
+  // Aplicar cor selecionada ao preview da loja
+}
+
+document.getElementById('newCollectionForm').onsubmit = function(e) {
+  e.preventDefault();
+  alert('Nova coleção criada! (simulado)');
+  this.reset();
+};
+
+document.getElementById('createExclusiveBtn').onclick = function() {
+  alert('Funcionalidade de criação de lançamento exclusivo (simulado)');
+};
+</script>
+</body>
+</html>
