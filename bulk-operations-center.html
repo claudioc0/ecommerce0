@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Centro de Operações em Massa - EcoGear</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .operations-header {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 16px;
+      margin-bottom: 2rem;
+    }
+
+    .operations-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+
+    .bulk-panel {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      border-top: 4px solid #f59e0b;
+    }
+
+    .warehouse-map {
+      background: #f8fafc;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      position: relative;
+      height: 200px;
+      overflow: hidden;
+    }
+
+    .warehouse-location {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: #f59e0b;
+      border-radius: 50%;
+      border: 3px solid white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .warehouse-location:hover {
+      transform: scale(1.3);
+    }
+
+    .warehouse-location.active {
+      background: #22c55e;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    }
+
+    .bulk-order-form {
+      background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%);
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 1rem 0;
+    }
+
+    .quantity-selector {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+
+    .quantity-option {
+      background: white;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .quantity-option:hover {
+      border-color: #f59e0b;
+      background: #fef3c7;
+    }
+
+    .quantity-option.selected {
+      border-color: #f59e0b;
+      background: #d97706;
+      color: white;
+    }
+
+    .logistics-timeline {
+      background: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      border: 1px solid #e5e7eb;
+    }
+
+    .timeline-step {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1rem 0;
+      padding: 1rem;
+      background: #f8fafc;
+      border-radius: 8px;
+      border-left: 4px solid #f59e0b;
+    }
+
+    .step-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      background: #f59e0b;
+    }
+
+    .step-completed {
+      background: #22c55e;
+    }
+
+    .step-pending {
+      background: #6b7280;
+    }
+
+    .pricing-calculator {
+      background: #f0f9ff;
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 2rem 0;
+      border: 2px solid #3b82f6;
+    }
+
+    .discount-tier {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background: white;
+      border-radius: 8px;
+      margin: 0.5rem 0;
+      border: 1px solid #e5e7eb;
+    }
+
+    .discount-tier.active {
+      border-color: #3b82f6;
+      background: #f0f9ff;
+    }
+  </style>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="index.html">EcoGear</a>
+  <nav>
+    <a href="shop-grid.html">Loja</a>
+    <a href="distributor-dashboard.html">Dashboard</a>
+    <a href="bulk-operations-center.html">Operações em Massa</a>
+    <a href="logistics-optimization.html">Logística</a>
+  </nav>
+  <div class="top-actions">
+    <span style="background: #f59e0b; color: white; padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: bold;">DISTRIBUIDOR</span>
+  </div>
+</header>
+
+<main class="container">
+  <div class="operations-header">
+    <h1>📦 Centro de Operações em Massa</h1>
+    <p>Funcionalidade EXCLUSIVA para Distribuidores</p>
+    <div style="margin-top: 1rem; font-size: 1.1rem;">
+      <strong>Gestão logística e pedidos em grande escala</strong>
+    </div>
+  </div>
+
+  <div class="operations-grid">
+    <div class="bulk-panel">
+      <h3>🏭 Mapa de Armazéns</h3>
+      <div class="warehouse-map">
+        <div class="warehouse-location active" style="top: 30%; left: 20%;" title="São Paulo - 87% ocupado"></div>
+        <div class="warehouse-location" style="top: 40%; left: 35%;" title="Rio de Janeiro - 62% ocupado"></div>
+        <div class="warehouse-location" style="top: 60%; left: 25%;" title="Belo Horizonte - 45% ocupado"></div>
+        <div class="warehouse-location" style="top: 20%; left: 60%;" title="Brasília - 78% ocupado"></div>
+        <div class="warehouse-location" style="top: 80%; left: 15%;" title="Curitiba - 34% ocupado"></div>
+        
+        <div style="position: absolute; bottom: 10px; left: 10px; background: rgba(255,255,255,0.9); padding: 0.5rem; border-radius: 4px; font-size: 0.8rem;">
+          🟢 Ativo • 🟡 Ocupado • 🔴 Lotado
+        </div>
+      </div>
+      
+      <div style="margin-top: 1rem;">
+        <h4>Status em Tempo Real:</h4>
+        <div style="font-size: 0.9rem; color: #666;">
+          <div>• São Paulo: 1.247 pedidos processando</div>
+          <div>• Rio de Janeiro: 834 pedidos em separação</div>
+          <div>• Belo Horizonte: 456 pedidos aguardando</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bulk-panel">
+      <h3>📋 Pedidos em Massa Pendentes</h3>
+      <div id="bulkOrdersList">
+        <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; margin: 0.5rem 0; border-left: 4px solid #f59e0b;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong>Eco Fashion Network</strong><br>
+              <small>500 peças • R$ 125.000,00</small>
+            </div>
+            <button class="btn" onclick="processBulkOrder('eco-fashion')">Processar</button>
+          </div>
+        </div>
+        
+        <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; margin: 0.5rem 0; border-left: 4px solid #22c55e;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong>Vintage Dreams Chain</strong><br>
+              <small>300 peças • R$ 89.500,00</small>
+            </div>
+            <button class="btn" onclick="processBulkOrder('vintage-dreams')">Processar</button>
+          </div>
+        </div>
+        
+        <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; margin: 0.5rem 0; border-left: 4px solid #6b7280;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong>Sustainable Stores Ltd</strong><br>
+              <small>750 peças • R$ 198.000,00</small>
+            </div>
+            <button class="btn" onclick="processBulkOrder('sustainable')">Processar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="bulk-order-form">
+    <h3>📝 Criar Pedido em Massa</h3>
+    <form id="newBulkOrderForm">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <label>Cliente/Rede
+          <input type="text" id="clientName" placeholder="Nome da rede de lojas" required>
+        </label>
+        <label>CNPJ
+          <input type="text" id="clientCNPJ" placeholder="00.000.000/0001-00" required>
+        </label>
+      </div>
+
+      <label>Quantidade Total
+        <div class="quantity-selector">
+          <div class="quantity-option" data-qty="100">
+            <div style="font-size: 1.5rem; font-weight: bold;">100</div>
+            <div style="font-size: 0.8rem;">Desconto 15%</div>
+          </div>
+          <div class="quantity-option" data-qty="300">
+            <div style="font-size: 1.5rem; font-weight: bold;">300</div>
+            <div style="font-size: 0.8rem;">Desconto 25%</div>
+          </div>
+          <div class="quantity-option" data-qty="500">
+            <div style="font-size: 1.5rem; font-weight: bold;">500</div>
+            <div style="font-size: 0.8rem;">Desconto 35%</div>
+          </div>
+          <div class="quantity-option" data-qty="1000">
+            <div style="font-size: 1.5rem; font-weight: bold;">1000+</div>
+            <div style="font-size: 0.8rem;">Desconto 45%</div>
+          </div>
+        </div>
+      </label>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <label>Prazo de Entrega
+          <select id="deliveryTime" required>
+            <option value="">Selecione</option>
+            <option value="express">Express (7 dias) +15%</option>
+            <option value="standard">Padrão (15 dias)</option>
+            <option value="economy">Econômico (30 dias) -10%</option>
+          </select>
+        </label>
+        <label>Armazém de Origem
+          <select id="warehouse" required>
+            <option value="">Selecione</option>
+            <option value="sp">São Paulo (Disponível)</option>
+            <option value="rj">Rio de Janeiro (Disponível)</option>
+            <option value="bh">Belo Horizonte (Limitado)</option>
+          </select>
+        </label>
+      </div>
+
+      <button class="btn" type="submit" style="width: 100%; margin-top: 1.5rem;">
+        📦 Criar Pedido em Massa
+      </button>
+    </form>
+  </section>
+
+  <section class="pricing-calculator">
+    <h3>💰 Calculadora de Preços Atacado</h3>
+    <p>Preços dinâmicos baseados em volume e relacionamento</p>
+    
+    <div id="pricingTiers">
+      <div class="discount-tier">
+        <div>
+          <strong>50-99 peças</strong><br>
+          <small>Desconto básico</small>
+        </div>
+        <div style="font-size: 1.2rem; font-weight: bold; color: #22c55e;">15%</div>
+      </div>
+      <div class="discount-tier">
+        <div>
+          <strong>100-299 peças</strong><br>
+          <small>Desconto intermediário</small>
+        </div>
+        <div style="font-size: 1.2rem; font-weight: bold; color: #22c55e;">25%</div>
+      </div>
+      <div class="discount-tier active">
+        <div>
+          <strong>300-499 peças</strong><br>
+          <small>Desconto avançado</small>
+        </div>
+        <div style="font-size: 1.2rem; font-weight: bold; color: #22c55e;">35%</div>
+      </div>
+      <div class="discount-tier">
+        <div>
+          <strong>500+ peças</strong><br>
+          <small>Desconto premium</small>
+        </div>
+        <div style="font-size: 1.2rem; font-weight: bold; color: #22c55e;">45%</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>🚛 Logística Inteligente</h3>
+    <div class="logistics-timeline">
+      <h4>Pipeline de Processamento:</h4>
+      <div class="timeline-step">
+        <div class="step-icon step-completed">1</div>
+        <div>
+          <strong>Recebimento do Pedido</strong><br>
+          <small>Validação automática e aprovação</small>
+        </div>
+      </div>
+      <div class="timeline-step">
+        <div class="step-icon step-completed">2</div>
+        <div>
+          <strong>Separação no Armazém</strong><br>
+          <small>Sistema automatizado de picking</small>
+        </div>
+      </div>
+      <div class="timeline-step">
+        <div class="step-icon">3</div>
+        <div>
+          <strong>Embalagem e Etiquetagem</strong><br>
+          <small>Processo em andamento</small>
+        </div>
+      </div>
+      <div class="timeline-step">
+        <div class="step-icon step-pending">4</div>
+        <div>
+          <strong>Expedição</strong><br>
+          <small>Aguardando conclusão da embalagem</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>📊 Analytics de Distribuição</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; text-align: center;">
+      <div>
+        <div style="font-size: 2rem; font-weight: bold; color: #f59e0b;">1,247</div>
+        <div>Pedidos/Semana</div>
+      </div>
+      <div>
+        <div style="font-size: 2rem; font-weight: bold; color: #22c55e;">98.3%</div>
+        <div>Taxa de Entrega</div>
+      </div>
+      <div>
+        <div style="font-size: 2rem; font-weight: bold; color: #3b82f6;">4.2 dias</div>
+        <div>Tempo Médio</div>
+      </div>
+      <div>
+        <div style="font-size: 2rem; font-weight: bold; color: #8b5cf6;">R$ 2.1M</div>
+        <div>Volume Mensal</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="script.js"></script>
+<script src="access-control-system.js"></script>
+<script>
+// Verificação de acesso exclusivo para distribuidores
+if (!AccessControlSystem.hasExclusiveFeature('bulk_order_system')) {
+  document.body.innerHTML = `
+    <header class="topbar">
+      <a class="brand" href="index.html">EcoGear</a>
+    </header>
+    <main class="container">
+      <div class="card" style="text-align: center; padding: 3rem;">
+        <h2>🔒 Funcionalidade Exclusiva</h2>
+        <p>O <strong>Centro de Operações em Massa</strong> é exclusivo para <strong>Distribuidores</strong> certificados.</p>
+        <p>Esta ferramenta gerencia logística e pedidos em grande escala.</p>
+        <div style="background: #fef3c7; padding: 1.5rem; border-radius: 8px; margin: 2rem 0;">
+          <h4>Funcionalidades Exclusivas:</h4>
+          <ul style="text-align: left; margin: 1rem 0;">
+            <li>Pedidos em massa com descontos escalonados</li>
+            <li>Gestão de múltiplos armazéns</li>
+            <li>Otimização logística automática</li>
+            <li>Analytics de distribuição em tempo real</li>
+            <li>Sistema de preços atacado dinâmico</li>
+          </ul>
+        </div>
+        <a href="user-type-selector.html" class="btn" style="margin-top: 1rem;">Testar como Distribuidor</a>
+        <a href="index.html" class="btn alt" style="margin-top: 0.5rem;">Voltar ao Início</a>
+      </div>
+    </main>
+  `;
+}
+
+// Seleção de quantidade
+document.querySelectorAll('.quantity-option').forEach(option => {
+  option.onclick = function() {
+    document.querySelectorAll('.quantity-option').forEach(o => o.classList.remove('selected'));
+    this.classList.add('selected');
+    updatePricingTiers(parseInt(this.getAttribute('data-qty')));
+  };
+});
+
+function updatePricingTiers(quantity) {
+  document.querySelectorAll('.discount-tier').forEach(tier => tier.classList.remove('active'));
+  
+  if (quantity >= 500) {
+    document.querySelectorAll('.discount-tier')[3].classList.add('active');
+  } else if (quantity >= 300) {
+    document.querySelectorAll('.discount-tier')[2].classList.add('active');
+  } else if (quantity >= 100) {
+    document.querySelectorAll('.discount-tier')[1].classList.add('active');
+  } else {
+    document.querySelectorAll('.discount-tier')[0].classList.add('active');
+  }
+}
+
+// Formulário de pedido em massa
+document.getElementById('newBulkOrderForm').onsubmit = function(e) {
+  e.preventDefault();
+  
+  const selectedQty = document.querySelector('.quantity-option.selected');
+  if (!selectedQty) {
+    alert('Por favor, selecione uma quantidade.');
+    return;
+  }
+  
+  const quantity = selectedQty.getAttribute('data-qty');
+  const clientName = document.getElementById('clientName').value;
+  
+  alert(`Pedido em massa criado!\nCliente: ${clientName}\nQuantidade: ${quantity} peças\n\nProcessamento iniciado automaticamente.`);
+  
+  // Simular adição à lista de pedidos
+  const newOrder = document.createElement('div');
+  newOrder.style.cssText = 'background: #f0fdf4; padding: 1rem; border-radius: 8px; margin: 0.5rem 0; border-left: 4px solid #22c55e;';
+  newOrder.innerHTML = `
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <strong>${clientName}</strong><br>
+        <small>${quantity} peças • Processando...</small>
+      </div>
+      <span style="background: #22c55e; color: white; padding: 0.3rem 0.8rem; border-radius: 12px; font-size: 0.8rem;">NOVO</span>
+    </div>
+  `;
+  document.getElementById('bulkOrdersList').prepend(newOrder);
+  
+  this.reset();
+  document.querySelectorAll('.quantity-option').forEach(o => o.classList.remove('selected'));
+};
+
+function processBulkOrder(orderId) {
+  alert(`Processando pedido ${orderId}...\nSistema de separação automática ativado.\nPrevisão: 2-4 horas para conclusão.`);
+}
+
+// Animação dos armazéns
+setInterval(() => {
+  document.querySelectorAll('.warehouse-location').forEach(location => {
+    if (Math.random() > 0.7) {
+      location.style.background = '#22c55e';
+      setTimeout(() => {
+        location.style.background = '#f59e0b';
+      }, 1000);
+    }
+  });
+}, 5000);
+</script>
+</body>
+</html>
