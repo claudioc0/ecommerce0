@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Analytics Global - EcoGear</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .analytics-header {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 16px;
+      margin-bottom: 2rem;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .metric-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-top: 4px solid #ef4444;
+      transition: all 0.3s;
+    }
+
+    .metric-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(239, 68, 68, 0.2);
+    }
+
+    .real-time-chart {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 2rem 0;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      height: 300px;
+      position: relative;
+    }
+
+    .chart-line {
+      position: absolute;
+      bottom: 40px;
+      left: 40px;
+      right: 40px;
+      height: 2px;
+      background: #ef4444;
+      border-radius: 1px;
+    }
+
+    .data-point {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      border: 2px solid white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .data-point:hover {
+      transform: scale(1.5);
+    }
+
+    .user-segmentation {
+      background: #fef2f2;
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+
+    .segment-bar {
+      display: flex;
+      height: 40px;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 1rem 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .segment {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 0.8rem;
+      transition: all 0.3s;
+    }
+
+    .segment:hover {
+      filter: brightness(1.1);
+      transform: scaleY(1.1);
+    }
+
+    .system-health {
+      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 2rem 0;
+      border: 2px solid #22c55e;
+    }
+
+    .health-indicator {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1rem 0;
+      padding: 1rem;
+      background: white;
+      border-radius: 8px;
+    }
+
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .status-online { background: #22c55e; }
+    .status-warning { background: #fbbf24; }
+    .status-error { background: #ef4444; }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    .advanced-filters {
+      background: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      border: 1px solid #e5e7eb;
+    }
+  </style>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="index.html">EcoGear</a>
+  <nav>
+    <a href="admin-panel.html">Painel Admin</a>
+    <a href="analytics-dashboard.html">Analytics Global</a>
+    <a href="system-config.html">Configurações</a>
+    <a href="security-center.html">Centro de Segurança</a>
+  </nav>
+  <div class="top-actions">
+    <span style="background: #ef4444; color: white; padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: bold;">ADMIN GLOBAL</span>
+  </div>
+</header>
+
+<main class="container">
+  <div class="analytics-header">
+    <h1>📊 Analytics Global do Sistema</h1>
+    <p>Painel EXCLUSIVO para Administradores - Visão completa de toda a plataforma</p>
+  </div>
+
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div style="font-size: 2.5rem; font-weight: bold; color: #ef4444;">12.847</div>
+      <div>Usuários Ativos</div>
+      <div style="font-size: 0.8rem; color: #666; margin-top: 0.5rem;">↑ 23% vs mês anterior</div>
+    </div>
+    <div class="metric-card">
+      <div style="font-size: 2.5rem; font-weight: bold; color: #22c55e;">R$ 2.1M</div>
+      <div>Receita Total</div>
+      <div style="font-size: 0.8rem; color: #666; margin-top: 0.5rem;">↑ 45% vs mês anterior</div>
+    </div>
+    <div class="metric-card">
+      <div style="font-size: 2.5rem; font-weight: bold; color: #06b6d4;">3.456</div>
+      <div>Transações</div>
+      <div style="font-size: 0.8rem; color: #666; margin-top: 0.5rem;">↑ 18% vs mês anterior</div>
+    </div>
+    <div class="metric-card">
+      <div style="font-size: 2.5rem; font-weight: bold; color: #8b5cf6;">98.7%</div>
+      <div>Uptime do Sistema</div>
+      <div style="font-size: 0.8rem; color: #666; margin-top: 0.5rem;">SLA: 99.9%</div>
+    </div>
+  </div>
+
+  <section class="real-time-chart">
+    <h3>📈 Tráfego em Tempo Real</h3>
+    <div class="chart-line"></div>
+    <div class="data-point" style="bottom: 120px; left: 15%;" title="09:00 - 1.2K usuários"></div>
+    <div class="data-point" style="bottom: 180px; left: 30%;" title="12:00 - 2.1K usuários"></div>
+    <div class="data-point" style="bottom: 220px; left: 45%;" title="15:00 - 2.8K usuários"></div>
+    <div class="data-point" style="bottom: 160px; left: 60%;" title="18:00 - 1.9K usuários"></div>
+    <div class="data-point" style="bottom: 140px; left: 75%;" title="21:00 - 1.5K usuários"></div>
+    <div class="data-point" style="bottom: 100px; left: 90%;" title="00:00 - 0.8K usuários"></div>
+    
+    <div style="position: absolute; bottom: 10px; left: 40px; right: 40px; display: flex; justify-content: space-between; font-size: 0.8rem; color: #666;">
+      <span>09:00</span><span>12:00</span><span>15:00</span><span>18:00</span><span>21:00</span><span>00:00</span>
+    </div>
+  </section>
+
+  <section class="user-segmentation">
+    <h3>👥 Segmentação de Usuários</h3>
+    <p>Distribuição por tipo de usuário na plataforma</p>
+    
+    <div class="segment-bar">
+      <div class="segment" style="background: #3b82f6; width: 45%;">Clientes (45%)</div>
+      <div class="segment" style="background: #10b981; width: 25%;">Lojistas (25%)</div>
+      <div class="segment" style="background: #fbbf24; width: 15%;">VIPs (15%)</div>
+      <div class="segment" style="background: #8b5cf6; width: 8%;">Brechós (8%)</div>
+      <div class="segment" style="background: #ec4899; width: 4%;">Grifes (4%)</div>
+      <div class="segment" style="background: #f59e0b; width: 3%;">Outros (3%)</div>
+    </div>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-top: 2rem; text-align: center;">
+      <div>
+        <div style="font-size: 1.5rem; font-weight: bold; color: #3b82f6;">5.781</div>
+        <div style="font-size: 0.9rem;">Clientes Ativos</div>
+      </div>
+      <div>
+        <div style="font-size: 1.5rem; font-weight: bold; color: #10b981;">3.212</div>
+        <div style="font-size: 0.9rem;">Lojistas</div>
+      </div>
+      <div>
+        <div style="font-size: 1.5rem; font-weight: bold; color: #fbbf24;">1.927</div>
+        <div style="font-size: 0.9rem;">Clientes VIP</div>
+      </div>
+      <div>
+        <div style="font-size: 1.5rem; font-weight: bold; color: #8b5cf6;">1.028</div>
+        <div style="font-size: 0.9rem;">Brechós</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="system-health">
+    <h3>🏥 Saúde do Sistema</h3>
+    <div id="systemHealth">
+      <div class="health-indicator">
+        <div class="status-dot status-online"></div>
+        <div>
+          <strong>Servidores Principais</strong><br>
+          <small>Todos os serviços operacionais</small>
+        </div>
+        <div style="margin-left: auto; font-weight: bold; color: #22c55e;">ONLINE</div>
+      </div>
+      
+      <div class="health-indicator">
+        <div class="status-dot status-online"></div>
+        <div>
+          <strong>Base de Dados</strong><br>
+          <small>Latência: 12ms • Conexões: 847/1000</small>
+        </div>
+        <div style="margin-left: auto; font-weight: bold; color: #22c55e;">SAUDÁVEL</div>
+      </div>
+      
+      <div class="health-indicator">
+        <div class="status-dot status-warning"></div>
+        <div>
+          <strong>CDN Global</strong><br>
+          <small>Alguns nós com latência elevada</small>
+        </div>
+        <div style="margin-left: auto; font-weight: bold; color: #fbbf24;">ATENÇÃO</div>
+      </div>
+      
+      <div class="health-indicator">
+        <div class="status-dot status-online"></div>
+        <div>
+          <strong>Sistemas de Pagamento</strong><br>
+          <small>Todas as integrações funcionais</small>
+        </div>
+        <div style="margin-left: auto; font-weight: bold; color: #22c55e;">ONLINE</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>🔍 Filtros Avançados de Analytics</h3>
+    <div class="advanced-filters">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+        <label>Período
+          <select id="timePeriod">
+            <option>Últimas 24 horas</option>
+            <option>Última semana</option>
+            <option>Último mês</option>
+            <option>Último trimestre</option>
+            <option>Último ano</option>
+          </select>
+        </label>
+        <label>Tipo de Usuário
+          <select id="userTypeFilter">
+            <option value="">Todos</option>
+            <option value="customer">Clientes</option>
+            <option value="seller">Lojistas</option>
+            <option value="premium">VIPs</option>
+            <option value="brecho">Brechós</option>
+            <option value="grife">Grifes</option>
+          </select>
+        </label>
+        <label>Região
+          <select id="regionFilter">
+            <option value="">Todas</option>
+            <option value="southeast">Sudeste</option>
+            <option value="south">Sul</option>
+            <option value="northeast">Nordeste</option>
+            <option value="north">Norte</option>
+            <option value="midwest">Centro-Oeste</option>
+          </select>
+        </label>
+        <label>Módulo
+          <select id="moduleFilter">
+            <option value="">Todos</option>
+            <option value="vintage_auth">Autenticação Vintage</option>
+            <option value="ai_style">IA de Estilo</option>
+            <option value="brand_studio">Brand Studio</option>
+            <option value="vip_area">Área VIP</option>
+          </select>
+        </label>
+      </div>
+      <button class="btn" id="applyFilters" style="margin-top: 1rem;">Aplicar Filtros</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>🎯 Performance por Módulo Exclusivo</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+      <div style="background: #f3e8ff; padding: 1rem; border-radius: 8px; border-left: 4px solid #8b5cf6;">
+        <strong>Autenticação Vintage</strong><br>
+        <div style="font-size: 1.5rem; font-weight: bold; color: #8b5cf6; margin: 0.5rem 0;">1.247</div>
+        <small>Verificações realizadas • 94% precisão</small>
+      </div>
+      <div style="background: #f0f9ff; padding: 1rem; border-radius: 8px; border-left: 4px solid #06b6d4;">
+        <strong>IA de Estilo</strong><br>
+        <div style="font-size: 1.5rem; font-weight: bold; color: #06b6d4; margin: 0.5rem 0;">3.456</div>
+        <small>Análises geradas • 89% satisfação</small>
+      </div>
+      <div style="background: #fdf2f8; padding: 1rem; border-radius: 8px; border-left: 4px solid #ec4899;">
+        <strong>Brand Studio</strong><br>
+        <div style="font-size: 1.5rem; font-weight: bold; color: #ec4899; margin: 0.5rem 0;">234</div>
+        <small>Campanhas criadas • ROI médio: 340%</small>
+      </div>
+      <div style="background: #fef3c7; padding: 1rem; border-radius: 8px; border-left: 4px solid #f59e0b;">
+        <strong>Área VIP</strong><br>
+        <div style="font-size: 1.5rem; font-weight: bold; color: #f59e0b; margin: 0.5rem 0;">1.927</div>
+        <small>Clientes VIP • 67% retenção</small>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="script.js"></script>
+<script src="access-control-system.js"></script>
+<script>
+// Verificação de acesso exclusivo para administradores
+if (AccessControlSystem.getCurrentUser().level < 10) {
+  document.body.innerHTML = `
+    <header class="topbar">
+      <a class="brand" href="index.html">EcoGear</a>
+    </header>
+    <main class="container">
+      <div class="card" style="text-align: center; padding: 3rem;">
+        <h2>🔒 Acesso Ultra-Restrito</h2>
+        <p>O <strong>Analytics Global</strong> é exclusivo para <strong>Administradores</strong> do sistema.</p>
+        <p>Este painel oferece visão completa de toda a plataforma e dados sensíveis.</p>
+        <div style="background: #fef2f2; padding: 1.5rem; border-radius: 8px; margin: 2rem 0;">
+          <h4>Dados Administrativos:</h4>
+          <ul style="text-align: left; margin: 1rem 0;">
+            <li>Métricas globais em tempo real</li>
+            <li>Segmentação avançada de usuários</li>
+            <li>Performance de módulos exclusivos</li>
+            <li>Saúde e status dos sistemas</li>
+            <li>Analytics de receita e conversão</li>
+          </ul>
+        </div>
+        <a href="user-type-selector.html" class="btn" style="margin-top: 1rem;">Testar como Admin</a>
+        <a href="index.html" class="btn alt" style="margin-top: 0.5rem;">Voltar ao Início</a>
+      </div>
+    </main>
+  `;
+}
+
+// Simular dados em tempo real
+function updateRealTimeMetrics() {
+  const metrics = document.querySelectorAll('.metric-card div:first-child');
+  metrics.forEach(metric => {
+    const currentValue = metric.textContent;
+    if (currentValue.includes('.')) {
+      const baseValue = parseFloat(currentValue.replace(/[^\d.]/g, ''));
+      const variation = (Math.random() - 0.5) * 0.1;
+      const newValue = Math.max(0, baseValue + variation);
+      
+      if (currentValue.includes('R$')) {
+        metric.textContent = `R$ ${newValue.toFixed(1)}M`;
+      } else if (currentValue.includes('%')) {
+        metric.textContent = `${newValue.toFixed(1)}%`;
+      } else {
+        metric.textContent = newValue.toFixed(0);
+      }
+    }
+  });
+}
+
+// Aplicar filtros
+document.getElementById('applyFilters').onclick = function() {
+  const timePeriod = document.getElementById('timePeriod').value;
+  const userType = document.getElementById('userTypeFilter').value;
+  const region = document.getElementById('regionFilter').value;
+  const module = document.getElementById('moduleFilter').value;
+  
+  alert(`Filtros aplicados:\nPeríodo: ${timePeriod}\nTipo: ${userType || 'Todos'}\nRegião: ${region || 'Todas'}\nMódulo: ${module || 'Todos'}`);
+  
+  // Simular atualização dos dados
+  updateRealTimeMetrics();
+};
+
+// Atualizar métricas a cada 5 segundos
+setInterval(updateRealTimeMetrics, 5000);
+
+// Animação dos pontos de dados
+document.querySelectorAll('.data-point').forEach((point, index) => {
+  point.style.animationDelay = `${index * 0.2}s`;
+  point.style.animation = 'dataPointPulse 3s ease-in-out infinite';
+});
+
+// Adicionar CSS para animação
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes dataPointPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+  }
+`;
+document.head.appendChild(style);
+</script>
+</body>
+</html>
