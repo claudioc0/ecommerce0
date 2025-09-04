@@ -226,12 +226,15 @@ document.getElementById('logoutBtn').onclick = function() {
   updateNavbarForLogout();
 };
 
-document.getElementById('signupForm').onsubmit = function(e) {
-  e.preventDefault();
-  alert('Conta criada com sucesso (simulado)');
-  localStorage.setItem('userLoggedIn', 'true');
-  window.location.href = "index.html";
-};
+const signupFormElement = document.getElementById('signupForm');
+if (signupFormElement) {
+  signupFormElement.onsubmit = function(e) {
+    e.preventDefault();
+    alert('Conta criada com sucesso (simulado)');
+    localStorage.setItem('userLoggedIn', 'true');
+    window.location.href = "index.html";
+  };
+}
 </script>
 </body>
 </html>
