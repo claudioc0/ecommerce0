@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Rede de Influencers - EcoGear</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .influencer-header {
+      background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 16px;
+      margin-bottom: 2rem;
+    }
+
+    .influencer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+
+    .influencer-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      border-top: 4px solid #ec4899;
+      transition: all 0.3s;
+    }
+
+    .influencer-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 30px rgba(236, 72, 153, 0.2);
+    }
+
+    .influencer-profile {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .influencer-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #ec4899;
+    }
+
+    .engagement-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      margin: 1rem 0;
+      text-align: center;
+    }
+
+    .metric-item {
+      background: #fdf2f8;
+      padding: 0.5rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+    }
+
+    .collaboration-status {
+      display: inline-block;
+      padding: 0.3rem 0.8rem;
+      border-radius: 15px;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
+    .status-active { background: #dcfce7; color: #166534; }
+    .status-pending { background: #fef3c7; color: #92400e; }
+    .status-completed { background: #dbeafe; color: #1e40af; }
+
+    .campaign-creator {
+      background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 2rem 0;
+      border: 2px solid #ec4899;
+    }
+
+    .ai-briefing-generator {
+      background: #f3e8ff;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+    }
+
+    .roi-calculator {
+      background: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      border: 1px solid #e5e7eb;
+    }
+
+    .collaboration-timeline {
+      background: #f8fafc;
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 1rem 0;
+    }
+
+    .timeline-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 0.5rem 0;
+      padding: 0.8rem;
+      background: white;
+      border-radius: 6px;
+      border-left: 3px solid #ec4899;
+    }
+  </style>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="index.html">EcoGear</a>
+  <nav>
+    <a href="shop-grid.html">Loja</a>
+    <a href="grife-studio.html">Brand Studio</a>
+    <a href="influencer-network.html">Rede de Influencers</a>
+    <a href="exclusive-drops.html">Drops Exclusivos</a>
+  </nav>
+  <div class="top-actions">
+    <span style="background: #ec4899; color: white; padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: bold;">GRIFE LUXURY</span>
+  </div>
+</header>
+
+<main class="container">
+  <div class="influencer-header">
+    <h1>🌟 Rede de Influencers</h1>
+    <p>Módulo EXCLUSIVO para Grifes - Gerencie colaborações e campanhas com influenciadores</p>
+  </div>
+
+  <section class="card">
+    <h3>👥 Influencers Ativos na Rede</h3>
+    <div class="influencer-grid" id="influencerNetwork">
+      <div class="influencer-card">
+        <div class="influencer-profile">
+          <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=60&h=60&fit=crop&crop=face" class="influencer-avatar">
+          <div>
+            <strong>@fashionista_ana</strong><br>
+            <small>Fashion & Lifestyle</small>
+          </div>
+        </div>
+        <div class="engagement-metrics">
+          <div class="metric-item">
+            <div style="font-weight: bold; color: #ec4899;">847K</div>
+            <div>Seguidores</div>
+          </div>
+          <div class="metric-item">
+            <div style="font-weight: bold; color: #06b6d4;">8.4%</div>
+            <div>Engajamento</div>
+          </div>
+          <div class="metric-item">
+            <div style="font-weight: bold; color: #22c55e;">R$ 2.5K</div>
+            <div>Por Post</div>
+          </div>
+        </div>
+        <div style="margin: 1rem 0;">
+          <span class="collaboration-status status-active">COLABORAÇÃO ATIVA</span>
+        </div>
+        <button class="btn" onclick="openInfluencerProfile('ana')">Ver Perfil Completo</button>
+      </div>
+
+      <div class="influencer-card">
+        <div class="influencer-profile">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&h=60&fit=crop&crop=face" class="influencer-avatar">
+          <div>
+            <strong>@eco_carlos</strong><br>
+            <small>Sustentabilidade</small>
+          </div>
+        </div>
+        <div class="engagement-metrics">
+          <div class="metric-item">
+            <div style="font-weight: bold; color: #ec4899;">234K</div>
+            <div>Seguidores</div>
+          </div>
+          <div class="metric-item">
+            <div style="font-weight: bold; color: #06b6d4;">12.1%</div>
+            <div>Engajamento</div>
+          </div>
+          <div class="metric-item">
+            <div style="font-weight: bold; color: #22c55e;">R$ 1.8K</div>
+            <div>Por Post</div>
+          </div>
+        </div>
+        <div style="margin: 1rem 0;">
+          <span class="collaboration-status status-pending">PROPOSTA ENVIADA</span>
+        </div>
+        <button class="btn" onclick="openInfluencerProfile('carlos')">Ver Perfil Completo</button>
+      </div>
+
+      <div class="influencer-card">
+        <div class="influencer-profile">
+          <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=60&h=60&fit=crop&crop=face" class="influencer-avatar">
+          <div>
+            <strong>@vintage_maria</strong><br>
+            <small>Vintage & Retro</small>
+          </div>
+        </div>
+        <div class="engagement-metrics">
+          <div class="metric-item">
+            <div style="font-weight: bold; color: #ec4899;">156K</div>
+            <div>Seguidores</div>
+          </div>
+          <div class="metric-item">
+            <div style="font-weight: bold; color: #06b6d4;">15.7%</div>
+            <div>Engajamento</div>
+          </div>
+          <div class="metric-item">
+            <div style="font-weight: bold; color: #22c55e;">R$ 1.2K</div>
+            <div>Por Post</div>
+          </div>
+        </div>
+        <div style="margin: 1rem 0;">
+          <span class="collaboration-status status-completed">CAMPANHA FINALIZADA</span>
+        </div>
+        <button class="btn" onclick="openInfluencerProfile('maria')">Ver Perfil Completo</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="campaign-creator">
+    <h3>🎬 Criador de Campanhas com IA</h3>
+    <p>Funcionalidade exclusiva - IA gera briefings personalizados para cada influencer</p>
+    
+    <form id="campaignForm">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0;">
+        <label>Produto/Coleção
+          <input type="text" id="productName" placeholder="Ex: Coleção Primavera 2025" required>
+        </label>
+        <label>Orçamento Total
+          <input type="number" id="budget" placeholder="10000" min="1000" required>
+        </label>
+      </div>
+
+      <label>Objetivo da Campanha
+        <select id="campaignObjective" required>
+          <option value="">Selecione</option>
+          <option value="awareness">Awareness de Marca</option>
+          <option value="sales">Conversão em Vendas</option>
+          <option value="engagement">Engajamento</option>
+          <option value="launch">Lançamento de Produto</option>
+        </select>
+      </label>
+
+      <label>Público-Alvo
+        <select id="targetAudience" required>
+          <option value="">Selecione</option>
+          <option value="young-adults">Jovens Adultos (18-25)</option>
+          <option value="professionals">Profissionais (26-35)</option>
+          <option value="mature">Público Maduro (35+)</option>
+          <option value="eco-conscious">Conscientes Ambientais</option>
+        </select>
+      </label>
+
+      <button class="btn" type="submit">🤖 Gerar Campanha com IA</button>
+    </form>
+
+    <div class="ai-briefing-generator" id="aiBriefing" style="display: none;">
+      <h4>🧠 Briefing Gerado pela IA:</h4>
+      <div id="generatedBriefing" style="background: white; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+        <!-- Conteúdo será gerado dinamicamente -->
+      </div>
+      <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+        <button class="btn">📤 Enviar para Influencers</button>
+        <button class="btn alt">✏️ Editar Briefing</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>💰 Calculadora de ROI Automática</h3>
+    <div class="roi-calculator">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; text-align: center;">
+        <div>
+          <div style="font-size: 1.8rem; font-weight: bold; color: #ec4899;">R$ 45.2K</div>
+          <div style="color: #666;">Investimento Total</div>
+        </div>
+        <div>
+          <div style="font-size: 1.8rem; font-weight: bold; color: #22c55e;">R$ 127.8K</div>
+          <div style="color: #666;">Retorno Gerado</div>
+        </div>
+        <div>
+          <div style="font-size: 1.8rem; font-weight: bold; color: #06b6d4;">283%</div>
+          <div style="color: #666;">ROI</div>
+        </div>
+        <div>
+          <div style="font-size: 1.8rem; font-weight: bold; color: #f59e0b;">2.8M</div>
+          <div style="color: #666;">Impressões</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>📈 Performance das Colaborações</h3>
+    <div class="collaboration-timeline">
+      <div class="timeline-item">
+        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=40&h=40&fit=crop&crop=face" style="width: 40px; height: 40px; border-radius: 50%;">
+        <div>
+          <strong>@fashionista_ana</strong> • Coleção Verão<br>
+          <small>847K impressões • 12.3K cliques • ROI: 340%</small>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face" style="width: 40px; height: 40px; border-radius: 50%;">
+        <div>
+          <strong>@eco_carlos</strong> • Linha Sustentável<br>
+          <small>234K impressões • 8.9K cliques • ROI: 280%</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>🎯 Descoberta de Novos Influencers</h3>
+    <p>IA identifica influencers emergentes compatíveis com sua marca</p>
+    
+    <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; margin: 1rem 0;">
+      <h4>🤖 Sugestões da IA:</h4>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1rem 0;">
+        <div style="background: white; padding: 1rem; border-radius: 6px;">
+          <strong>@sustainable_style</strong><br>
+          <small>89K seguidores • Nicho: Eco-fashion</small><br>
+          <span style="background: #22c55e; color: white; padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.7rem;">95% compatibilidade</span>
+        </div>
+        <div style="background: white; padding: 1rem; border-radius: 6px;">
+          <strong>@minimalist_wardrobe</strong><br>
+          <small>156K seguidores • Nicho: Minimalismo</small><br>
+          <span style="background: #22c55e; color: white; padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.7rem;">92% compatibilidade</span>
+        </div>
+      </div>
+      <button class="btn">🔍 Buscar Mais Influencers</button>
+    </div>
+  </section>
+</main>
+
+<script src="script.js"></script>
+<script src="access-control-system.js"></script>
+<script>
+// Verificação de acesso exclusivo para grifes
+if (!AccessControlSystem.hasExclusiveFeature('influencer_collaboration_tools')) {
+  document.body.innerHTML = `
+    <header class="topbar">
+      <a class="brand" href="index.html">EcoGear</a>
+    </header>
+    <main class="container">
+      <div class="card" style="text-align: center; padding: 3rem;">
+        <h2>🔒 Funcionalidade Exclusiva</h2>
+        <p>A <strong>Rede de Influencers</strong> é exclusiva para <strong>Grifes de Luxo</strong>.</p>
+        <p>Este módulo permite gestão completa de colaborações com influenciadores.</p>
+        <div style="background: #fdf2f8; padding: 1.5rem; border-radius: 8px; margin: 2rem 0;">
+          <h4>Funcionalidades Exclusivas:</h4>
+          <ul style="text-align: left; margin: 1rem 0;">
+            <li>Gestão de rede de influencers</li>
+            <li>IA para geração de briefings</li>
+            <li>Calculadora de ROI automática</li>
+            <li>Analytics de performance</li>
+            <li>Descoberta de novos talentos</li>
+          </ul>
+        </div>
+        <a href="user-type-selector.html" class="btn" style="margin-top: 1rem;">Testar como Grife</a>
+        <a href="index.html" class="btn alt" style="margin-top: 0.5rem;">Voltar ao Início</a>
+      </div>
+    </main>
+  `;
+}
+
+document.getElementById('campaignForm').onsubmit = function(e) {
+  e.preventDefault();
+  
+  const product = document.getElementById('productName').value;
+  const budget = document.getElementById('budget').value;
+  const objective = document.getElementById('campaignObjective').value;
+  const audience = document.getElementById('targetAudience').value;
+  
+  // Simular geração de briefing pela IA
+  const briefings = {
+    awareness: `Criar conteúdo autêntico mostrando o produto ${product} em situações do dia a dia. Foco em storytelling e conexão emocional com a marca.`,
+    sales: `Demonstrar os benefícios únicos do produto ${product} com call-to-action claro. Incluir código de desconto exclusivo para seguidores.`,
+    engagement: `Criar conteúdo interativo sobre ${product} - enquetes, perguntas, desafios. Incentivar participação da audiência.`,
+    launch: `Revelar o lançamento de ${product} de forma exclusiva. Criar expectativa e senso de urgência para o lançamento oficial.`
+  };
+  
+  document.getElementById('generatedBriefing').innerHTML = `
+    <h5>📝 Briefing Personalizado:</h5>
+    <p>${briefings[objective]}</p>
+    <div style="margin-top: 1rem; padding: 1rem; background: #f8fafc; border-radius: 6px;">
+      <strong>Detalhes da Campanha:</strong><br>
+      • Produto: ${product}<br>
+      • Orçamento: R$ ${parseInt(budget).toLocaleString()}<br>
+      • Público: ${audience}<br>
+      • Duração sugerida: 2 semanas<br>
+      • Influencers recomendados: 3-5 perfis
+    </div>
+  `;
+  
+  document.getElementById('aiBriefing').style.display = 'block';
+  document.getElementById('aiBriefing').scrollIntoView({ behavior: 'smooth' });
+};
+
+function openInfluencerProfile(influencerId) {
+  alert(`Abrindo perfil detalhado do influencer ${influencerId} (funcionalidade exclusiva para grifes)`);
+}
+</script>
+</body>
+</html>
