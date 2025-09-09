@@ -3,7 +3,6 @@
  * Defines the skeleton of payment processing algorithm
  */
 export class PaymentProcessor {
-    // Template method - defines the payment processing flow
     processPayment(paymentData) {
         console.log('Starting payment processing...');
         
@@ -27,7 +26,6 @@ export class PaymentProcessor {
         }
     }
 
-    // Common validation method
     validatePaymentData(data) {
         if (!data.amount || data.amount <= 0) {
             throw new Error('Invalid payment amount');
@@ -40,7 +38,6 @@ export class PaymentProcessor {
         }
     }
 
-    // Abstract methods to be implemented by subclasses
     preprocessPaymentData(data) {
         throw new Error('preprocessPaymentData method must be implemented by subclass');
     }
@@ -53,7 +50,6 @@ export class PaymentProcessor {
         throw new Error('chargePayment method must be implemented by subclass');
     }
 
-    // Hook methods - can be overridden by subclasses
     postProcessPayment(chargeResult, paymentData) {
         return {
             ...chargeResult,
@@ -73,7 +69,6 @@ export class PaymentProcessor {
     }
 
     getErrorCode(error) {
-        // Map common errors to codes
         const errorMap = {
             'Invalid payment amount': 'INVALID_AMOUNT',
             'Currency is required': 'MISSING_CURRENCY',
@@ -91,16 +86,15 @@ export class PaymentProcessor {
     }
 }
 
-// Concrete implementation 1: Credit Card Processor
 export class CreditCardProcessor extends PaymentProcessor {
     preprocessPaymentData(data) {
         return {
             ...data,
             cardNumber: this.maskCardNumber(data.cardNumber),
             expiryDate: this.validateExpiryDate(data.expiryDate),
-            cvv: data.cvv ? '***' : null, // Mask CVV for security
-            amount: Math.round(data.amount * 100), // Convert to cents
-            originalCardNumber: data.cardNumber // Keep for processing (in real app, this would be tokenized)
+            cvv: data.cvv ? '***' : null, 
+            amount: Math.round(data.amount * 100), 
+            originalCardNumber: data.cardNumber 
         };
     }
 
@@ -125,15 +119,12 @@ export class CreditCardProcessor extends PaymentProcessor {
     }
 
     authenticatePayment(data) {
-        // Simulate credit card authentication
         const cardNumber = data.originalCardNumber.replace(/\D/g, '');
         
-        // Basic card validation (Luhn algorithm simulation)
         if (!this.isValidCardNumber(cardNumber)) {
             return { success: false, error: 'Invalid card number' };
         }
         
-        // Simulate 3D Secure or other authentication
         return {
             success: true,
             authCode: this.generateAuthCode(),
@@ -143,7 +134,6 @@ export class CreditCardProcessor extends PaymentProcessor {
     }
 
     isValidCardNumber(cardNumber) {
-        // Simplified Luhn algorithm check
         let sum = 0;
         let isEven = false;
         
@@ -176,8 +166,7 @@ export class CreditCardProcessor extends PaymentProcessor {
     }
 
     chargePayment(data, authResult) {
-        // Simulate payment charging
-        const success = Math.random() > 0.1; // 90% success rate
+        const success = Math.random() > 0.1; 
         
         if (success) {
             return {
@@ -207,7 +196,6 @@ export class CreditCardProcessor extends PaymentProcessor {
     }
 }
 
-// Concrete implementation 2: PIX Processor
 export class PIXProcessor extends PaymentProcessor {
     preprocessPaymentData(data) {
         return {
@@ -221,7 +209,6 @@ export class PIXProcessor extends PaymentProcessor {
     validatePixKey(pixKey) {
         if (!pixKey) throw new Error('PIX key is required');
         
-        // Validate different PIX key types
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const phoneRegex = /^\+55\d{10,11}$/;
         const cpfRegex = /^\d{11}$/;
@@ -236,18 +223,16 @@ export class PIXProcessor extends PaymentProcessor {
     }
 
     authenticatePayment(data) {
-        // PIX authentication is typically instant
         return {
             success: true,
             pixCode: this.generatePixCode(),
             qrCode: this.generateQRCode(data),
-            expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString() // 30 minutes
+            expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString() 
         };
     }
 
     chargePayment(data, authResult) {
-        // Simulate PIX payment processing
-        // In real implementation, this would wait for payment confirmation
+
         return {
             success: true,
             pixTransactionId: this.generatePixTransactionId(),
@@ -255,18 +240,17 @@ export class PIXProcessor extends PaymentProcessor {
             qrCode: authResult.qrCode,
             amount: data.amount,
             currency: data.currency,
-            status: 'pending', // PIX payments start as pending
+            status: 'pending', 
             expiresAt: authResult.expiresAt
         };
     }
 
     generatePixCode() {
-        // Generate a PIX payment code
+
         return '00020126' + Date.now().toString().slice(-8) + Math.random().toString(36).substring(2, 8).toUpperCase();
     }
 
     generateQRCode(data) {
-        // In real implementation, this would generate actual QR code
         return `data:image/svg+xml;base64,${btoa(`
             <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
                 <rect width="200" height="200" fill="white"/>
@@ -287,7 +271,6 @@ export class PIXProcessor extends PaymentProcessor {
     postProcessPayment(chargeResult, paymentData) {
         const result = super.postProcessPayment(chargeResult, paymentData);
         
-        // Add PIX-specific post-processing
         result.paymentInstructions = {
             message: 'Escaneie o código QR ou copie o código PIX para efetuar o pagamento',
             pixCode: chargeResult.pixCode,

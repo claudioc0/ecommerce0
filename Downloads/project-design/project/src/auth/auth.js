@@ -7,18 +7,21 @@ export class AuthService {
     }
 
     register(userData) {
+        // Get existing users
         const users = this.storage.get('users') || [];
         
+        // Check if user already exists
         if (users.find(user => user.email === userData.email)) {
             return null;
         }
         
+        // Create new user
         const newUser = {
             id: Date.now().toString(),
             email: userData.email,
-            password: userData.password, 
+            password: userData.password, // In production, this should be hashed
             name: userData.name,
-            role: userData.role || 'customer', 
+            role: userData.role || 'customer', // customer, premium, vendor, admin, super_admin
             isAdmin: userData.role === 'admin' || userData.role === 'super_admin',
             isPremium: userData.role === 'premium',
             isVendor: userData.role === 'vendor',
@@ -48,10 +51,11 @@ export class AuthService {
             }
         };
         
+        // Save user
         users.push(newUser);
         this.storage.set('users', users);
         
-
+        // Auto login
         this.currentUser = newUser;
         this.storage.set('currentUser', newUser);
         
@@ -66,7 +70,7 @@ export class AuthService {
             this.currentUser = user;
             this.storage.set('currentUser', user);
             
-
+            // Update last login
             user.lastLogin = new Date().toISOString();
             this.storage.set('users', users);
             
@@ -88,11 +92,11 @@ export class AuthService {
     updateProfile(profileData) {
         if (!this.currentUser) return false;
         
-
+        // Update current user
         Object.assign(this.currentUser.profile, profileData);
         this.storage.set('currentUser', this.currentUser);
         
- 
+        // Update in users array
         const users = this.storage.get('users') || [];
         const userIndex = users.findIndex(u => u.id === this.currentUser.id);
         if (userIndex !== -1) {
@@ -140,7 +144,7 @@ export class AuthService {
         this.currentUser.password = newPassword;
         this.storage.set('currentUser', this.currentUser);
         
-
+        // Update in users array
         const users = this.storage.get('users') || [];
         const userIndex = users.findIndex(u => u.id === this.currentUser.id);
         if (userIndex !== -1) {
@@ -151,7 +155,7 @@ export class AuthService {
         return true;
     }
 
-
+    // Initialize demo users
     initializeDemoData() {
         const existingUsers = this.storage.get('users');
         if (!existingUsers || existingUsers.length === 0) {

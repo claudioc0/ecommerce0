@@ -3,7 +3,6 @@
  * Defines the skeleton of notification sending algorithm
  */
 export class NotificationSender {
-    // Template method - defines the notification sending flow
     sendNotification(recipient, message, options = {}) {
         console.log('Starting notification sending process...');
         
@@ -25,7 +24,6 @@ export class NotificationSender {
         }
     }
 
-    // Common validation methods
     validateRecipient(recipient) {
         if (!recipient) {
             throw new Error('Recipient is required');
@@ -38,7 +36,6 @@ export class NotificationSender {
         }
     }
 
-    // Abstract methods to be implemented by subclasses
     preprocessMessage(message, options) {
         throw new Error('preprocessMessage method must be implemented by subclass');
     }
@@ -51,7 +48,6 @@ export class NotificationSender {
         throw new Error('deliverMessage method must be implemented by subclass');
     }
 
-    // Hook methods - can be overridden by subclasses
     postProcessDelivery(deliveryResult, recipient, options) {
         return {
             ...deliveryResult,
@@ -72,7 +68,6 @@ export class NotificationSender {
     }
 
     maskRecipientInfo(recipient) {
-        // Mask sensitive recipient information
         if (recipient.email) {
             const [local, domain] = recipient.email.split('@');
             return {
@@ -100,7 +95,6 @@ export class NotificationSender {
     }
 }
 
-// Concrete implementation 1: Email Notification
 export class EmailNotificationSender extends NotificationSender {
     validateRecipient(recipient) {
         super.validateRecipient(recipient);
@@ -120,7 +114,6 @@ export class EmailNotificationSender extends NotificationSender {
         
         let processedContent = message.content;
         
-        // Replace template variables
         Object.keys(variables).forEach(key => {
             const placeholder = `{{${key}}}`;
             processedContent = processedContent.replace(new RegExp(placeholder, 'g'), variables[key]);
@@ -137,7 +130,6 @@ export class EmailNotificationSender extends NotificationSender {
     formatMessage(message, recipient, options) {
         const { priority = 'normal', attachments = [] } = options;
         
-        // Create HTML email format
         const htmlContent = this.createHTMLEmail(message, recipient, options);
         
         return {
@@ -208,16 +200,14 @@ export class EmailNotificationSender extends NotificationSender {
     }
 
     deliverMessage(recipient, message, options) {
-        // Simulate email delivery
         console.log(`Sending email to: ${message.to}`);
         console.log(`Subject: ${message.subject}`);
         
-        // Simulate delivery delay
         const deliveryTime = Math.random() * 2000 + 500; // 0.5-2.5 seconds
         
         return new Promise((resolve) => {
             setTimeout(() => {
-                const success = Math.random() > 0.05; // 95% success rate
+                const success = Math.random() > 0.05; 
                 
                 if (success) {
                     resolve({
@@ -242,7 +232,6 @@ export class EmailNotificationSender extends NotificationSender {
     }
 }
 
-// Concrete implementation 2: SMS Notification
 export class SMSNotificationSender extends NotificationSender {
     validateRecipient(recipient) {
         super.validateRecipient(recipient);
@@ -270,12 +259,10 @@ export class SMSNotificationSender extends NotificationSender {
         
         let content = message.content;
         
-        // Shorten URLs if requested
         if (shortUrl) {
             content = this.shortenUrls(content);
         }
         
-        // Ensure message fits in SMS limit
         if (content.length > 160) {
             content = content.substring(0, 157) + '...';
         }
@@ -290,7 +277,6 @@ export class SMSNotificationSender extends NotificationSender {
     shortenUrls(text) {
         const urlRegex = /(https?:\/\/[^\s]+)/g;
         return text.replace(urlRegex, (url) => {
-            // Simulate URL shortening
             return 'https://short.ly/' + Math.random().toString(36).substring(2, 8);
         });
     }
@@ -307,7 +293,6 @@ export class SMSNotificationSender extends NotificationSender {
     }
 
     formatPhoneNumber(phone) {
-        // Remove all non-digit characters and add country code if missing
         const cleaned = phone.replace(/\D/g, '');
         
         if (cleaned.length === 11 && cleaned.startsWith('0')) {
@@ -318,7 +303,7 @@ export class SMSNotificationSender extends NotificationSender {
             return '+' + cleaned;
         }
         
-        return phone; // Return as-is if format is unclear
+        return phone; 
     }
 
     deliverMessage(recipient, message, options) {
@@ -330,7 +315,7 @@ export class SMSNotificationSender extends NotificationSender {
         
         return new Promise((resolve) => {
             setTimeout(() => {
-                const success = Math.random() > 0.02; // 98% success rate
+                const success = Math.random() > 0.02; 
                 
                 if (success) {
                     resolve({
@@ -348,8 +333,7 @@ export class SMSNotificationSender extends NotificationSender {
     }
 
     calculateSMSCost(characterCount) {
-        // Simulate SMS cost calculation (in cents)
-        const baseCost = 5; // 5 cents per SMS
+        const baseCost = 5; 
         const segments = Math.ceil(characterCount / 160);
         return baseCost * segments;
     }
@@ -363,7 +347,6 @@ export class SMSNotificationSender extends NotificationSender {
     }
 }
 
-// Concrete implementation 3: Push Notification
 export class PushNotificationSender extends NotificationSender {
     validateRecipient(recipient) {
         super.validateRecipient(recipient);
@@ -376,7 +359,6 @@ export class PushNotificationSender extends NotificationSender {
     preprocessMessage(message, options) {
         const { badge = 1, sound = 'default', category = 'general' } = options;
         
-        // Truncate title and content for push notifications
         const title = message.subject.length > 50 ? 
             message.subject.substring(0, 47) + '...' : message.subject;
         
@@ -416,7 +398,6 @@ export class PushNotificationSender extends NotificationSender {
     }
 
     deliverMessage(recipient, message, options) {
-        // Simulate push notification delivery
         console.log(`Sending push notification to device: ${message.to.substring(0, 10)}...`);
         console.log(`Title: ${message.notification.title}`);
         console.log(`Body: ${message.notification.body}`);
@@ -425,7 +406,7 @@ export class PushNotificationSender extends NotificationSender {
         
         return new Promise((resolve) => {
             setTimeout(() => {
-                const success = Math.random() > 0.03; // 97% success rate
+                const success = Math.random() > 0.03; 
                 
                 if (success) {
                     resolve({
@@ -443,7 +424,6 @@ export class PushNotificationSender extends NotificationSender {
     }
 
     detectPlatform(deviceToken) {
-        // Simple platform detection based on token format
         if (deviceToken.length === 64) {
             return 'iOS';
         } else if (deviceToken.startsWith('f') || deviceToken.startsWith('c')) {

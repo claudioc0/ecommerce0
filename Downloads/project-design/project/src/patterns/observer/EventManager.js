@@ -9,7 +9,6 @@ export class EventManager {
         this.maxHistorySize = 1000;
     }
 
-    // Subscribe to an event
     subscribe(eventType, callback, options = {}) {
         const { once = false, priority = 0, context = null } = options;
         
@@ -29,16 +28,13 @@ export class EventManager {
         const listeners = this.listeners.get(eventType);
         listeners.push(listener);
         
-        // Sort by priority (higher priority first)
         listeners.sort((a, b) => b.priority - a.priority);
         
         console.log(`Subscribed to event: ${eventType} (ID: ${listener.id})`);
         
-        // Return unsubscribe function
         return () => this.unsubscribe(eventType, listener.id);
     }
 
-    // Unsubscribe from an event
     unsubscribe(eventType, listenerId) {
         if (!this.listeners.has(eventType)) {
             return false;
@@ -51,7 +47,6 @@ export class EventManager {
             listeners.splice(index, 1);
             console.log(`Unsubscribed from event: ${eventType} (ID: ${listenerId})`);
             
-            // Clean up empty event types
             if (listeners.length === 0) {
                 this.listeners.delete(eventType);
             }
@@ -62,7 +57,6 @@ export class EventManager {
         return false;
     }
 
-    // Publish an event to all subscribers
     publish(eventType, data = null, options = {}) {
         const { async = false, timeout = 5000 } = options;
         
@@ -73,7 +67,6 @@ export class EventManager {
             id: this.generateEventId()
         };
         
-        // Add to history
         this.addToHistory(event);
         
         if (!this.listeners.has(eventType)) {
@@ -107,7 +100,6 @@ export class EventManager {
                     result
                 });
                 
-                // Mark for removal if it's a one-time listener
                 if (listener.once) {
                     listenersToRemove.push(listener.id);
                 }
@@ -121,7 +113,6 @@ export class EventManager {
             }
         });
         
-        // Remove one-time listeners
         listenersToRemove.forEach(id => {
             this.unsubscribe(event.type, id);
         });
@@ -179,7 +170,6 @@ export class EventManager {
             }
         });
         
-        // Remove one-time listeners
         listenersToRemove.forEach(id => {
             this.unsubscribe(event.type, id);
         });
@@ -187,23 +177,19 @@ export class EventManager {
         return results;
     }
 
-    // Get all listeners for an event type
     getListeners(eventType) {
         return this.listeners.get(eventType) || [];
     }
 
-    // Get all event types
     getEventTypes() {
         return Array.from(this.listeners.keys());
     }
 
-    // Clear all listeners
     clear() {
         this.listeners.clear();
         console.log('All event listeners cleared');
     }
 
-    // Get event history
     getEventHistory(eventType = null, limit = 100) {
         let history = [...this.eventHistory];
         
@@ -217,7 +203,6 @@ export class EventManager {
     addToHistory(event) {
         this.eventHistory.push(event);
         
-        // Keep history size manageable
         if (this.eventHistory.length > this.maxHistorySize) {
             this.eventHistory = this.eventHistory.slice(-this.maxHistorySize);
         }
@@ -231,7 +216,6 @@ export class EventManager {
         return 'event_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
     }
 
-    // Debug information
     getDebugInfo() {
         const info = {
             totalEventTypes: this.listeners.size,
@@ -257,5 +241,4 @@ export class EventManager {
     }
 }
 
-// Global event manager instance
 export const globalEventManager = new EventManager();

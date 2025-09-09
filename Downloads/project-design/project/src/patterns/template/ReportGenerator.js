@@ -3,7 +3,6 @@
  * Defines the skeleton of report generation algorithm
  */
 export class ReportGenerator {
-    // Template method - defines the algorithm structure
     generateReport(data, options = {}) {
         console.log('Starting report generation...');
         
@@ -16,7 +15,6 @@ export class ReportGenerator {
         return finalReport;
     }
 
-    // Abstract methods to be implemented by subclasses
     preprocessData(data) {
         throw new Error('preprocessData method must be implemented by subclass');
     }
@@ -29,7 +27,6 @@ export class ReportGenerator {
         throw new Error('createReportContent method must be implemented by subclass');
     }
 
-    // Hook method - can be overridden by subclasses
     postProcessReport(content, options) {
         return {
             content,
@@ -39,7 +36,6 @@ export class ReportGenerator {
         };
     }
 
-    // Common method used by all subclasses
     getReportMetadata() {
         return {
             generator: this.constructor.name,
@@ -53,10 +49,8 @@ export class ReportGenerator {
     }
 }
 
-// Concrete implementation 1: Sales Report
 export class SalesReportGenerator extends ReportGenerator {
     preprocessData(data) {
-        // Filter and clean sales data
         return data.filter(item => item.status === 'completed')
                   .map(item => ({
                       ...item,
@@ -184,7 +178,6 @@ export class SalesReportGenerator extends ReportGenerator {
     }
 }
 
-// Concrete implementation 2: Inventory Report
 export class InventoryReportGenerator extends ReportGenerator {
     preprocessData(data) {
         return data.filter(item => item.active)

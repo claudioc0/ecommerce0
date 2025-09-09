@@ -10,7 +10,6 @@ export class NotificationCenter {
         this.defaultDuration = 5000; // 5 seconds
     }
 
-    // Subscribe to notification types
     subscribe(notificationType, callback, options = {}) {
         const { priority = 0, filter = null, context = null } = options;
         
@@ -30,16 +29,13 @@ export class NotificationCenter {
         const subscribers = this.subscribers.get(notificationType);
         subscribers.push(subscriber);
         
-        // Sort by priority (higher first)
         subscribers.sort((a, b) => b.priority - a.priority);
         
         console.log(`Subscribed to notifications: ${notificationType}`);
         
-        // Return unsubscribe function
         return () => this.unsubscribe(notificationType, subscriber.id);
     }
 
-    // Unsubscribe from notifications
     unsubscribe(notificationType, subscriberId) {
         if (!this.subscribers.has(notificationType)) {
             return false;
@@ -61,7 +57,6 @@ export class NotificationCenter {
         return false;
     }
 
-    // Post a notification
     post(notificationType, data = {}, options = {}) {
         const {
             title = 'Notification',
@@ -89,13 +84,10 @@ export class NotificationCenter {
             dismissed: false
         };
         
-        // Add to notifications list
         this.addNotification(notification);
         
-        // Notify subscribers
         this.notifySubscribers(notification);
         
-        // Auto-dismiss if not persistent
         if (!persistent && duration > 0) {
             setTimeout(() => {
                 this.dismiss(notification.id);
@@ -105,17 +97,14 @@ export class NotificationCenter {
         return notification.id;
     }
 
-    // Add notification to list
     addNotification(notification) {
         this.notifications.unshift(notification);
         
-        // Keep only the most recent notifications
         if (this.notifications.length > this.maxNotifications) {
             this.notifications = this.notifications.slice(0, this.maxNotifications);
         }
     }
 
-    // Notify subscribers
     notifySubscribers(notification) {
         const subscribers = this.subscribers.get(notification.type) || [];
         const allSubscribers = this.subscribers.get('*') || []; // Wildcard subscribers
@@ -124,12 +113,10 @@ export class NotificationCenter {
         
         allRelevantSubscribers.forEach(subscriber => {
             try {
-                // Apply filter if present
                 if (subscriber.filter && !subscriber.filter(notification)) {
                     return;
                 }
                 
-                // Call subscriber callback
                 if (subscriber.context) {
                     subscriber.callback.call(subscriber.context, notification);
                 } else {
@@ -141,7 +128,6 @@ export class NotificationCenter {
         });
     }
 
-    // Mark notification as read
     markAsRead(notificationId) {
         const notification = this.notifications.find(n => n.id === notificationId);
         if (notification) {
@@ -151,13 +137,11 @@ export class NotificationCenter {
         return false;
     }
 
-    // Dismiss notification
     dismiss(notificationId) {
         const notification = this.notifications.find(n => n.id === notificationId);
         if (notification) {
             notification.dismissed = true;
             
-            // Notify subscribers about dismissal
             this.notifySubscribers({
                 ...notification,
                 type: 'notification_dismissed',
@@ -169,7 +153,6 @@ export class NotificationCenter {
         return false;
     }
 
-    // Clear all notifications
     clear() {
         this.notifications.forEach(notification => {
             if (!notification.dismissed) {
@@ -179,13 +162,11 @@ export class NotificationCenter {
         
         this.notifications = [];
         
-        // Notify about clear action
         this.post('notifications_cleared', {
             clearedAt: Date.now()
         });
     }
 
-    // Get notifications
     getNotifications(options = {}) {
         const {
             type = null,
@@ -215,7 +196,6 @@ export class NotificationCenter {
         return filtered;
     }
 
-    // Get notification counts
     getCounts() {
         const total = this.notifications.length;
         const unread = this.notifications.filter(n => !n.read && !n.dismissed).length;
@@ -224,7 +204,6 @@ export class NotificationCenter {
         return { total, unread, dismissed };
     }
 
-    // Utility methods
     generateSubscriberId() {
         return 'sub_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
     }
@@ -233,7 +212,6 @@ export class NotificationCenter {
         return 'notif_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
     }
 
-    // Predefined notification types
     success(title, message, options = {}) {
         return this.post('success', {}, {
             title,
@@ -278,7 +256,6 @@ export class NotificationCenter {
         });
     }
 
-    // System notifications
     orderPlaced(orderData) {
         return this.post('order_placed', orderData, {
             title: 'Pedido Realizado',
@@ -335,7 +312,6 @@ export class NotificationCenter {
     }
 }
 
-// Notification display component
 export class NotificationDisplay {
     constructor(notificationCenter, containerId = 'notification-container') {
         this.notificationCenter = notificationCenter;
@@ -347,7 +323,6 @@ export class NotificationDisplay {
     }
 
     init() {
-        // Create container if it doesn't exist
         this.container = document.getElementById(this.containerId);
         if (!this.container) {
             this.container = document.createElement('div');
@@ -356,12 +331,10 @@ export class NotificationDisplay {
             document.body.appendChild(this.container);
         }
         
-        // Subscribe to all notifications
         this.unsubscribe = this.notificationCenter.subscribe('*', (notification) => {
             this.displayNotification(notification);
         });
         
-        // Add styles
         this.addStyles();
     }
 
@@ -376,12 +349,10 @@ export class NotificationDisplay {
         
         this.displayedNotifications.set(notification.id, element);
         
-        // Animate in
         setTimeout(() => {
             element.classList.add('show');
         }, 10);
         
-        // Auto-remove if not persistent
         if (!notification.persistent && notification.duration > 0) {
             setTimeout(() => {
                 this.removeNotificationElement(notification.type, notification.id);
@@ -414,7 +385,6 @@ export class NotificationDisplay {
             ` : ''}
         `;
         
-        // Add action listeners
         notification.actions.forEach(action => {
             const button = element.querySelector(`[data-action="${action.action}"]`);
             if (button) {
@@ -424,7 +394,6 @@ export class NotificationDisplay {
             }
         });
         
-        // Add close listener
         const closeButton = element.querySelector('.notification-close');
         closeButton.addEventListener('click', () => {
             this.notificationCenter.dismiss(notification.id);
@@ -449,12 +418,10 @@ export class NotificationDisplay {
     handleAction(actionType, notification) {
         console.log(`Handling action: ${actionType}`, notification);
         
-        // Emit custom event for action handling
         window.dispatchEvent(new CustomEvent('notificationAction', {
             detail: { actionType, notification }
         }));
         
-        // Dismiss notification after action
         this.notificationCenter.dismiss(notification.id);
     }
 
@@ -599,5 +566,4 @@ export class NotificationDisplay {
     }
 }
 
-// Global notification center instance
 export const globalNotificationCenter = new NotificationCenter();

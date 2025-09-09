@@ -14,7 +14,7 @@ export class ConfigManager {
             language: 'pt-BR',
             currency: 'BRL',
             maxCartItems: 50,
-            sessionTimeout: 30 * 60 * 1000, // 30 minutes
+            sessionTimeout: 30 * 60 * 1000, 
             enableAnalytics: true,
             paymentMethods: ['pix', 'credit', 'debit', 'boleto', 'paypal'],
             shippingProviders: ['correios', 'jadlog', 'total'],
@@ -63,12 +63,10 @@ export class ConfigManager {
 
     notifyConfigChange(key, value) {
         console.log(`Configuration updated: ${key} = ${value}`);
-        // Notify other components about config changes
         window.dispatchEvent(new CustomEvent('configChanged', {
             detail: { key, value }
         }));
     }
 }
 
-// Prevent instantiation through Object.create
 ConfigManager.prototype.constructor = ConfigManager;

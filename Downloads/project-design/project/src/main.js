@@ -34,6 +34,16 @@ class App {
         this.currentView = 'catalog';
         this.currentProductView = 'grid';
         
+        // Initialize default filters to show all products
+        this.productService.setFilters({
+            category: '',
+            size: '',
+            color: '',
+            condition: '',
+            minPrice: 0,
+            maxPrice: 999999
+        });
+        
         this.init();
     }
 
@@ -691,12 +701,10 @@ class App {
         const user = this.authService.getCurrentUser();
         if (user) {
             this.renderNavbar();
-        }
-    }
-            
             // Publish login event
             this.eventManager.publish('user_login', { user });
-            
+        }
+    }
 
     logout() {
         const user = this.authService.getCurrentUser();

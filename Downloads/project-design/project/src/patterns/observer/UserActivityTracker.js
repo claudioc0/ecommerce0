@@ -16,7 +16,6 @@ export class UserActivityTracker {
         this.isTracking = false;
     }
 
-    // Add observer
     addObserver(observer) {
         if (this.isValidObserver(observer)) {
             this.observers.add(observer);
@@ -26,7 +25,6 @@ export class UserActivityTracker {
         return false;
     }
 
-    // Remove observer
     removeObserver(observer) {
         const removed = this.observers.delete(observer);
         if (removed) {
@@ -35,12 +33,10 @@ export class UserActivityTracker {
         return removed;
     }
 
-    // Validate observer has required methods
     isValidObserver(observer) {
         return observer && typeof observer.onUserActivity === 'function';
     }
 
-    // Notify all observers
     notifyObservers(activity) {
         this.observers.forEach(observer => {
             try {
@@ -51,7 +47,6 @@ export class UserActivityTracker {
         });
     }
 
-    // Start tracking user activities
     startTracking() {
         if (this.isTracking) {
             return;
@@ -60,28 +55,20 @@ export class UserActivityTracker {
         this.isTracking = true;
         this.sessionData.startTime = Date.now();
         
-        // Track page views
         this.trackPageView();
         
-        // Track clicks
         document.addEventListener('click', this.handleClick.bind(this));
         
-        // Track scrolling
         document.addEventListener('scroll', this.handleScroll.bind(this));
         
-        // Track mouse movement
         document.addEventListener('mousemove', this.handleMouseMove.bind(this));
         
-        // Track keyboard activity
         document.addEventListener('keydown', this.handleKeyDown.bind(this));
         
-        // Track form interactions
         document.addEventListener('input', this.handleInput.bind(this));
         
-        // Track page visibility changes
         document.addEventListener('visibilitychange', this.handleVisibilityChange.bind(this));
         
-        // Track session time
         this.startSessionTimer();
         
         console.log('User activity tracking started');
@@ -96,7 +83,6 @@ export class UserActivityTracker {
         });
     }
 
-    // Stop tracking
     stopTracking() {
         if (!this.isTracking) {
             return;
@@ -104,7 +90,6 @@ export class UserActivityTracker {
 
         this.isTracking = false;
         
-        // Remove event listeners
         document.removeEventListener('click', this.handleClick.bind(this));
         document.removeEventListener('scroll', this.handleScroll.bind(this));
         document.removeEventListener('mousemove', this.handleMouseMove.bind(this));
@@ -112,7 +97,6 @@ export class UserActivityTracker {
         document.removeEventListener('input', this.handleInput.bind(this));
         document.removeEventListener('visibilitychange', this.handleVisibilityChange.bind(this));
         
-        // Stop session timer
         if (this.sessionTimer) {
             clearInterval(this.sessionTimer);
         }
@@ -125,7 +109,6 @@ export class UserActivityTracker {
         });
     }
 
-    // Record an activity
     recordActivity(type, data = {}) {
         const activity = {
             id: this.generateActivityId(),
@@ -141,18 +124,15 @@ export class UserActivityTracker {
         
         this.activities.push(activity);
         
-        // Keep only last 1000 activities
         if (this.activities.length > 1000) {
             this.activities = this.activities.slice(-1000);
         }
         
-        // Notify observers
         this.notifyObservers(activity);
         
         return activity;
     }
 
-    // Event handlers
     handleClick(event) {
         this.sessionData.clicks++;
         
@@ -171,7 +151,6 @@ export class UserActivityTracker {
     }
 
     handleScroll(event) {
-        // Throttle scroll events
         if (!this.scrollThrottle) {
             this.scrollThrottle = setTimeout(() => {
                 this.sessionData.scrolls++;
@@ -191,7 +170,6 @@ export class UserActivityTracker {
     }
 
     handleMouseMove(event) {
-        // Throttle mouse move events heavily
         if (!this.mouseMoveThrottle) {
             this.mouseMoveThrottle = setTimeout(() => {
                 const mouseMoveData = {
@@ -264,7 +242,6 @@ export class UserActivityTracker {
         }, 1000);
     }
 
-    // Utility methods
     generateActivityId() {
         return 'activity_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
     }
@@ -276,7 +253,6 @@ export class UserActivityTracker {
         return this.sessionId;
     }
 
-    // Get analytics data
     getSessionData() {
         return {
             ...this.sessionData,
@@ -312,7 +288,6 @@ export class UserActivityTracker {
         return summary;
     }
 
-    // Export activities
     exportActivities() {
         const exportData = {
             sessionData: this.getSessionData(),
@@ -333,7 +308,6 @@ export class UserActivityTracker {
     }
 }
 
-// Example observers
 export class AnalyticsObserver {
     constructor(name = 'Analytics') {
         this.name = name;
@@ -373,22 +347,19 @@ export class SecurityObserver {
     constructor(name = 'Security') {
         this.name = name;
         this.suspiciousActivities = [];
-        this.clickThreshold = 100; // clicks per minute
-        this.keyThreshold = 200; // keys per minute
+        this.clickThreshold = 100; 
+        this.keyThreshold = 200; 
     }
 
     onUserActivity(activity) {
-        // Monitor for suspicious rapid clicking
         if (activity.type === 'click') {
             this.checkRapidClicking(activity);
         }
         
-        // Monitor for suspicious keyboard activity
         if (activity.type === 'keydown') {
             this.checkRapidTyping(activity);
         }
         
-        // Monitor for suspicious navigation patterns
         if (activity.type === 'page_view') {
             this.checkNavigationPattern(activity);
         }
@@ -451,5 +422,4 @@ export class SecurityObserver {
     }
 }
 
-// Global activity tracker instance
 export const globalActivityTracker = new UserActivityTracker();

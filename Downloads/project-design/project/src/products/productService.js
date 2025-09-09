@@ -92,7 +92,7 @@ export class ProductService {
             color: filters.color || '',
             condition: filters.condition || '',
             minPrice: filters.minPrice || 0,
-            maxPrice: filters.maxPrice || Infinity
+            maxPrice: filters.maxPrice || 999999
         };
     }
 

@@ -4,6 +4,14 @@ export class CartService {
     constructor() {
         this.storage = new StorageService('cart');
         this.items = this.storage.get('items') || [];
+        
+        // Ensure cart starts empty on first visit
+        if (!this.storage.exists('initialized')) {
+            this.items = [];
+            this.storage.set('items', []);
+            this.storage.set('initialized', true);
+        }
+        
         this.appliedCoupon = this.storage.get('appliedCoupon') || null;
     }
 
@@ -92,7 +100,7 @@ export class CartService {
     getShipping() {
         const subtotal = this.getSubtotal();
         if (subtotal === 0) return 0;
-        if (subtotal >= 200) return 0; 
+        if (subtotal >= 200) return 0; // Free shipping
         return 15.90;
     }
 
@@ -182,11 +190,13 @@ export class CartService {
     }
 
     calculateShipping(zipCode = '', weight = 1) {
+        // Simulate shipping calculation with Correios API
         const basePrice = 15.90;
         const weightMultiplier = Math.ceil(weight);
         
+        // Simple shipping calculation based on ZIP
         if (zipCode.startsWith('01') || zipCode.startsWith('04')) {
-            return basePrice * 0.8; // São Paulo 
+            return basePrice * 0.8; // São Paulo region - discount
         } else if (zipCode.startsWith('2')) {
             return basePrice * 1.2; // Rio de Janeiro
         } else if (zipCode.startsWith('3')) {
@@ -197,7 +207,7 @@ export class CartService {
     }
 
     getTotalWeight() {
-        // Assume que cada item pesa 0.5kg em média
+        // Assume each item weighs 0.5kg on average
         return this.items.reduce((total, item) => total + (item.quantity * 0.5), 0);
     }
 

@@ -47,15 +47,12 @@ export class Logger {
 
             this.logs.push(logEntry);
             
-            // Keep only the last maxLogs entries
             if (this.logs.length > this.maxLogs) {
                 this.logs = this.logs.slice(-this.maxLogs);
             }
 
-            // Console output with styling
             this.outputToConsole(logEntry);
             
-            // Store in localStorage for persistence
             this.persistLogs();
         }
     }
