@@ -1,0 +1,311 @@
+import { StorageService } from '../utils/storage.js';
+
+export class AuthService {
+    constructor() {
+        this.storage = new StorageService('auth');
+        this.currentUser = this.storage.get('currentUser');
+    }
+
+    register(userData) {
+        const users = this.storage.get('users') || [];
+        if (users.find(user => user.email === userData.email)) {
+            return null;
+        }
+        const newUser = {
+            id: Date.now().toString(),
+            email: userData.email,
+            password: userData.password,
+            name: userData.name,
+            role: userData.role || 'customer',
+            isAdmin: userData.role === 'admin' || userData.role === 'super_admin',
+            isPremium: userData.role === 'premium',
+            isVendor: userData.role === 'vendor',
+            createdAt: new Date().toISOString(),
+            subscription: {
+                type: userData.role === 'premium' ? 'premium' : 'basic',
+                expiresAt: userData.role === 'premium'
+                    ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
+                    : null,
+                features: this.getSubscriptionFeatures(userData.role)
+            },
+            profile: {
+                phone: '',
+                address: '',
+                city: '',
+                zip: '',
+                businessInfo: userData.role === 'vendor' ? {
+                    companyName: '',
+                    cnpj: '',
+                    businessType: '',
+                    verified: false
+                } : null,
+                preferences: {
+                    theme: 'light',
+                    notifications: true,
+                    language: 'pt-BR',
+                    currency: 'BRL'
+                }
+            }
+        };
+        users.push(newUser);
+        this.storage.set('users', users);
+        this.currentUser = newUser;
+        this.storage.set('currentUser', newUser);
+        return newUser;
+    }
+
+    login(email, password) {
+        const users = this.storage.get('users') || [];
+        const user = users.find(u => u.email === email && u.password === password);
+        if (user) {
+            this.currentUser = user;
+            this.storage.set('currentUser', user);
+            user.lastLogin = new Date().toISOString();
+            this.storage.set('users', users);
+            return user;
+        }
+        return null;
+    }
+
+    /**
+     * Simulate login with social provider (Google/Facebook)
+     * @param {string} provider ("google" or "facebook")
+     * @returns {Promise<Object>} User object
+     */
+    async loginWithProvider(provider) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                // Simulate external provider response
+                const providerEmail = provider === 'google'
+                    ? 'social_google@fashionstore.com'
+                    : 'social_facebook@fashionstore.com';
+                const providerName = provider === 'google'
+                    ? 'Cliente Google'
+                    : 'Cliente Facebook';
+                const existingUsers = this.storage.get('users') || [];
+                let user = existingUsers.find(u => u.email === providerEmail);
+
+                if (!user) {
+                    user = {
+                        id: `social-${provider}-${Date.now()}`,
+                        email: providerEmail,
+                        password: null,
+                        name: providerName,
+                        role: 'customer',
+                        isAdmin: false,
+                        isPremium: false,
+                        isVendor: false,
+                        provider,
+                        createdAt: new Date().toISOString(),
+                        lastLogin: new Date().toISOString(),
+                        subscription: {
+                            type: 'basic',
+                            features: ['basic_catalog', 'cart', 'orders']
+                        },
+                        profile: {
+                            phone: '',
+                            address: '',
+                            city: '',
+                            zip: '',
+                            preferences: {
+                                theme: 'light',
+                                notifications: true,
+                                language: 'pt-BR',
+                                currency: 'BRL'
+                            }
+                        }
+                    };
+                    existingUsers.push(user);
+                    this.storage.set('users', existingUsers);
+                } else {
+                    user.lastLogin = new Date().toISOString();
+                    this.storage.set('users', existingUsers);
+                }
+                this.currentUser = user;
+                this.storage.set('currentUser', user);
+                resolve(user);
+            }, 1000); // Simulate 1s latency
+        });
+    }
+
+    logout() {
+        this.currentUser = null;
+        this.storage.remove('currentUser');
+    }
+
+    getCurrentUser() {
+        return this.currentUser;
+    }
+
+    updateProfile(profileData) {
+        if (!this.currentUser) return false;
+        Object.assign(this.currentUser.profile, profileData);
+        this.storage.set('currentUser', this.currentUser);
+        const users = this.storage.get('users') || [];
+        const userIndex = users.findIndex(u => u.id === this.currentUser.id);
+        if (userIndex !== -1) {
+            users[userIndex] = this.currentUser;
+            this.storage.set('users', users);
+        }
+        return true;
+    }
+
+    getSubscriptionFeatures(role) {
+        const features = {
+            customer: ['basic_catalog', 'cart', 'orders'],
+            premium: ['basic_catalog', 'cart', 'orders', 'wishlist', 'priority_support', 'exclusive_products', 'advanced_filters'],
+            vendor: ['product_management', 'inventory', 'sales_analytics', 'customer_management'],
+            admin: ['user_management', 'system_settings', 'reports', 'content_management'],
+            super_admin: ['all_features', 'system_administration', 'security_management']
+        };
+        return features[role] || features.customer;
+    }
+
+    hasFeature(feature) {
+        if (!this.currentUser) return false;
+        return this.currentUser.subscription.features.includes(feature) ||
+            this.currentUser.subscription.features.includes('all_features');
+    }
+
+    getUserRole() {
+        return this.currentUser?.role || 'guest';
+    }
+
+    isAuthenticated() {
+        return !!this.currentUser;
+    }
+
+    isAdmin() {
+        return this.currentUser?.isAdmin || false;
+    }
+
+    changePassword(currentPassword, newPassword) {
+        if (!this.currentUser || this.currentUser.password !== currentPassword) {
+            return false;
+        }
+        this.currentUser.password = newPassword;
+        this.storage.set('currentUser', this.currentUser);
+        const users = this.storage.get('users') || [];
+        const userIndex = users.findIndex(u => u.id === this.currentUser.id);
+        if (userIndex !== -1) {
+            users[userIndex] = this.currentUser;
+            this.storage.set('users', users);
+        }
+        return true;
+    }
+
+    // Initialize demo users
+    initializeDemoData() {
+        const existingUsers = this.storage.get('users');
+        if (!existingUsers || existingUsers.length === 0) {
+            const demoUsers = [
+                {
+                    id: 'admin-1',
+                    email: 'admin@fashionstore.com',
+                    password: 'admin123',
+                    name: 'Administrador',
+                    role: 'super_admin',
+                    isAdmin: true,
+                    subscription: {
+                        type: 'admin',
+                        features: ['all_features']
+                    },
+                    createdAt: new Date().toISOString(),
+                    profile: {
+                        phone: '(11) 99999-9999',
+                        address: 'Rua das Flores, 123',
+                        city: 'São Paulo',
+                        zip: '01234-567',
+                        preferences: {
+                            theme: 'light',
+                            notifications: true
+                        }
+                    }
+                },
+                {
+                    id: 'customer-1',
+                    email: 'cliente@email.com',
+                    password: 'cliente123',
+                    name: 'João Silva',
+                    role: 'customer',
+                    isAdmin: false,
+                    subscription: {
+                        type: 'basic',
+                        features: ['basic_catalog', 'cart', 'orders']
+                    },
+                    createdAt: new Date().toISOString(),
+                    profile: {
+                        phone: '(11) 88888-8888',
+                        address: 'Av. Principal, 456',
+                        city: 'Rio de Janeiro',
+                        zip: '20000-000',
+                        preferences: {
+                            theme: 'light',
+                            notifications: true
+                        }
+                    }
+                },
+                {
+                    id: 'premium-1',
+                    email: 'premium@email.com',
+                    password: 'premium123',
+                    name: 'Maria Premium',
+                    role: 'premium',
+                    isAdmin: false,
+                    isPremium: true,
+                    subscription: {
+                        type: 'premium',
+                        expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+                        features: ['basic_catalog', 'cart', 'orders', 'wishlist', 'priority_support', 'exclusive_products', 'advanced_filters']
+                    },
+                    createdAt: new Date().toISOString(),
+                    profile: {
+                        phone: '(11) 77777-7777',
+                        address: 'Rua Premium, 789',
+                        city: 'São Paulo',
+                        zip: '01234-567',
+                        preferences: {
+                            theme: 'dark',
+                            notifications: true,
+                            language: 'pt-BR'
+                        }
+                    }
+                },
+                {
+                    id: 'vendor-1',
+                    email: 'lojista@email.com',
+                    password: 'lojista123',
+                    name: 'Carlos Vendedor',
+                    role: 'vendor',
+                    isAdmin: false,
+                    isVendor: true,
+                    subscription: {
+                        type: 'vendor',
+                        features: ['product_management', 'inventory', 'sales_analytics', 'customer_management']
+                    },
+                    createdAt: new Date().toISOString(),
+                    profile: {
+                        phone: '(11) 66666-6666',
+                        address: 'Av. Comercial, 456',
+                        city: 'Rio de Janeiro',
+                        zip: '20000-000',
+                        businessInfo: {
+                            companyName: 'Moda & Estilo Ltda',
+                            cnpj: '12.345.678/0001-90',
+                            businessType: 'Varejo de Moda',
+                            verified: true
+                        },
+                        preferences: {
+                            theme: 'light',
+                            notifications: true,
+                            language: 'pt-BR'
+                        }
+                    }
+                }
+            ];
+            this.storage.set('users', demoUsers);
+        }
+    }
+}
+
+export default AuthService;
