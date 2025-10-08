@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { consultarCep } from '../utils/cepService.js';
 
 // Função para consultar CEP e preencher campos de endereço
@@ -32,10 +31,6 @@ export function renderCheckout(items, total, shipping) {
     setTimeout(() => {
         initCepListener();
     }, 100);
-=======
-export function renderCheckout(items, total, shipping) {
-    const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
->>>>>>> d80d84e05fdcb5b0cda9374dc3ea0d6d8e7b2e8c
 
     return `
         <div class="checkout-container">

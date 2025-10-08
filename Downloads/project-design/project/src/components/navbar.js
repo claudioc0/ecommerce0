@@ -1,14 +1,9 @@
-<<<<<<< HEAD
 import { currencyService } from '../currency/currencyService.js';
 
 export function renderNavbar(user, cartItemCount) {
     const userRole = user?.role || 'guest';
     const currencies = currencyService.getAvailableCurrencies();
     const currentCurrency = currencyService.getCurrentCurrency();
-=======
-export function renderNavbar(user, cartItemCount) {
-    const userRole = user?.role || 'guest';
->>>>>>> d80d84e05fdcb5b0cda9374dc3ea0d6d8e7b2e8c
     
     return `
         <div class="nav-content">
@@ -17,7 +12,6 @@ export function renderNavbar(user, cartItemCount) {
             <div class="nav-links">
                 <a href="#" class="nav-link" data-view="catalog">Produtos</a>
                 
-<<<<<<< HEAD
                 <div class="currency-selector">
                     <select id="currency-select">
                         ${currencies.map(currency => `
@@ -28,8 +22,6 @@ export function renderNavbar(user, cartItemCount) {
                     </select>
                 </div>
                 
-=======
->>>>>>> d80d84e05fdcb5b0cda9374dc3ea0d6d8e7b2e8c
                 ${user?.isPremium ? `
                     <a href="#" class="nav-link" data-view="premium" style="color: var(--accent-500);">
                         Premium ⭐

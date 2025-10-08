@@ -718,16 +718,6 @@ class App {
         }
     }
 
-    updateCartQuantity(productId, action) {
-        if (action === 'increase') {
-            this.cartService.increaseQuantity(productId);
-        } else if (action === 'decrease') {
-            this.cartService.decreaseQuantity(productId);
-        }
-        
-        this.renderCart();
-        this.renderNavbar();
-    }
 
     updateCartQuantity(productId, productSize, action) {
         const id = parseInt(productId);
