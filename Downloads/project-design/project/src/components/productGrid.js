@@ -24,7 +24,11 @@ export function renderProducts(products, viewType = 'grid', wishlistService = nu
                     <div>
                         <h3 class="product-title">${product.name}</h3>
                         <p class="product-description">${product.description}</p>
+<<<<<<< HEAD
                         <div class="product-price" data-price-brl="${product.price}">${window.currencyService.formatCurrency(window.currencyService.convertFromBRL(product.price))}</div>
+=======
+                        <div class="product-price">R$ ${product.price.toFixed(2)}</div>
+>>>>>>> d80d84e05fdcb5b0cda9374dc3ea0d6d8e7b2e8c
                         <div class="product-meta">
                             <span class="product-tag">${product.condition}</span>
                             <span class="product-tag">${product.category}</span>
