@@ -4,7 +4,7 @@
 $host = 'localhost';
 $db   = 'ecommerce';
 $user = 'root';
-$pass = 'PUC@1234'; // <-- Sua senha
+$pass = 'PUC@1234'; 
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";

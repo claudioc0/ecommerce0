@@ -1,14 +1,16 @@
 <?php
+// session_start() DEVE ser a primeira coisa no seu script.
 session_start();
 
 $message = '';
 
 if (isset($_GET['status']) && $_GET['status'] == 'success') {
-    $message = '<div class="text-success text-center mb-4">🎉 Cadastro realizado com sucesso! Faça o login para continuar.</div>';
+    $message = '<div class="text-success text-center mb-4">🎉 Cadastro realizado! Faça o login.</div>';
 }
 
+// Se o utilizador já estiver logado, redireciona para a página principal
 if (isset($_SESSION['user_id'])) {
-    header('Location: dashboard.php');
+    header('Location: index.php');
     exit();
 }
 
@@ -22,17 +24,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $message = '<div class="text-error text-center mb-4">Por favor, preencha todos os campos.</div>';
     } else {
         try {
-            $sql = "SELECT id_usuario, nome, email, senha FROM Usuario WHERE email = ?";
+            // --- ALTERAÇÃO 1: Buscar a 'role' do utilizador ---
+            $sql = "SELECT id_usuario, nome, email, senha, role FROM Usuario WHERE email = ?";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([$email]);
             $user = $stmt->fetch();
 
             if ($user && password_verify($senha, $user['senha'])) {
-                
+                // Login bem-sucedido.
                 $_SESSION['user_id'] = $user['id_usuario'];
                 $_SESSION['user_name'] = $user['nome'];
+                // --- ALTERAÇÃO 2: Guardar a 'role' na sessão ---
+                $_SESSION['user_role'] = $user['role'];
 
-                header('Location: dashboard.php');
+                // --- ALTERAÇÃO 3: Redirecionamento condicional ---
+                if ($user['role'] === 'vendor') {
+                    header('Location: vendor_dashboard.php');
+                } else {
+                    header('Location: index.php');
+                }
                 exit(); 
 
             } else {
@@ -57,21 +67,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: var(--gray-50);
-        }
-        .auth-container {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            max-width: 450px;
-            width: 100%;
-        }
+        body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: var(--gray-50); }
+        .auth-container { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); max-width: 450px; width: 100%; }
     </style>
 </head>
 <body>
@@ -99,3 +96,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 </body>
 </html>
+

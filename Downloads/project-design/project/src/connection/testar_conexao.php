@@ -31,7 +31,7 @@
 
     } catch (PDOException $e) {
         echo '<div class="container error">';
-        echo '<h1>❌ Falha na Conexão!</h1>';
+        echo '<h1> Falha na Conexão!</h1>';
         echo '<p>Não foi possível conectar ao banco de dados. Verifique as credenciais e se o serviço do MySQL está em execução.</p>';
         echo '<p><strong>Erro:</strong> ' . htmlspecialchars($e->getMessage()) . '</p>';
         echo '</div>';
