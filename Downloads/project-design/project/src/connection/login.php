@@ -39,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 // --- ALTERAÇÃO 3: Redirecionamento condicional ---
                 if ($user['role'] === 'vendor') {
-                    header('Location: vendor_dashboard.php');
+                    header('Location: index.php');
                 } else {
                     header('Location: index.php');
                 }

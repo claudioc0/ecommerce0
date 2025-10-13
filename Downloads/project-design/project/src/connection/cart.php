@@ -66,6 +66,10 @@ if (!empty($cart_product_ids)) {
 
     <div class="container" style="padding-top: 32px;">
         <h2>Meu Carrinho de Compras</h2>
+        
+        <?php if (isset($_GET['error']) && $_GET['error'] === 'checkout_failed'): ?>
+            <p class="text-error text-center mb-4">Ocorreu um erro ao finalizar a sua compra. Por favor, tente novamente.</p>
+        <?php endif; ?>
 
         <?php if (empty($cart_items)): ?>
             <div class="empty-state" style="margin-top: 48px;">
@@ -120,10 +124,11 @@ if (!empty($cart_product_ids)) {
                         <span>Total</span>
                         <span>R$ <?php echo number_format($total_price, 2, ',', '.'); ?></span>
                     </div>
-                    <button class="btn-primary" style="width: 100%; margin-top: 16px;">Finalizar Compra</button>
+                    <a href="checkout.php" class="btn-primary" style="width: 100%; margin-top: 16px; text-align: center;">Finalizar Compra</a>
                 </div>
             </div>
         <?php endif; ?>
     </div>
 </body>
 </html>
+
