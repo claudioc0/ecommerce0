@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FashionStore - Sua Loja Online</title>
+    <link rel="stylesheet" href="src/styles/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <nav id="navbar"></nav>
+        
+        <main id="main-content">
+            <div id="catalog-view" class="view active" data-view="catalog">
+                <div class="hero-section">
+                    <div class="container">
+                        <h1>Descubra a Moda que é a Sua Cara</h1>
+                        <p>Peças únicas e tendências para todos os estilos</p>
+                        <button class="btn-primary" onclick="showProducts()">Explorar Produtos</button>
+                    </div>
+                </div>
+                
+                <div class="container">
+                    <div id="filters"></div>
+                    
+                    <div id="products-section">
+                        <div class="section-header">
+                            <h2>Produtos</h2>
+                            <div class="view-controls">
+                                <button id="grid-view" class="view-btn active" onclick="setProductView('grid')">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <rect x="3" y="3" width="7" height="7"/>
+                                        <rect x="14" y="3" width="7" height="7"/>
+                                        <rect x="3" y="14" width="7" height="7"/>
+                                        <rect x="14" y="14" width="7" height="7"/>
+                                    </svg>
+                                </button>
+                                <button id="list-view" class="view-btn" onclick="setProductView('list')">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <rect x="3" y="6" width="18" height="2"/>
+                                        <rect x="3" y="12" width="18" height="2"/>
+                                        <rect x="3" y="18" width="18" height="2"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="products-grid" class="products-grid"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="wishlist-view" class="view" data-view="wishlist">
+                <div class="container">
+                    <h2>Lista de Desejos</h2>
+                    <div id="wishlist-content"></div>
+                </div>
+            </div>
+
+            <div id="support-view" class="view" data-view="support">
+                <div class="container">
+                    <h2>Suporte ao Cliente</h2>
+                    <div id="support-content"></div>
+                </div>
+            </div>
+
+            <div id="cart-view" class="view" data-view="cart">
+                <div class="container">
+                    <h2>Carrinho de Compras</h2>
+                    <div id="cart-content"></div>
+                </div>
+            </div>
+
+            <div id="checkout-view" class="view" data-view="checkout">
+                <div class="container">
+                    <h2>Finalizar Compra</h2>
+                    <div id="checkout-content"></div>
+                </div>
+            </div>
+
+            <div id="admin-view" class="view" data-view="admin">
+                <div class="container">
+                    <h2>Painel Administrativo</h2>
+                    <div id="admin-content"></div>
+                </div>
+            </div>
+
+            <div id="super-admin-view" class="view" data-view="super-admin">
+                <div class="container">
+                    <h2>Super Administrador</h2>
+                    <div id="super-admin-content"></div>
+                </div>
+            </div>
+
+            <div id="vendor-view" class="view" data-view="vendor">
+                <div class="container">
+                    <h2>Painel do Lojista</h2>
+                    <div id="vendor-content"></div>
+                </div>
+            </div>
+
+            <div id="premium-view" class="view" data-view="premium">
+                <div class="container">
+                    <h2>Área Premium</h2>
+                    <div id="premium-content"></div>
+                </div>
+            </div>
+
+            <div id="analytics-view" class="view" data-view="analytics">
+                <div class="container">
+                    <h2>Analytics Avançado</h2>
+                    <div id="analytics-content"></div>
+                </div>
+            </div>
+
+            <div id="inventory-view" class="view" data-view="inventory">
+                <div class="container">
+                    <h2>Gestão de Estoque</h2>
+                    <div id="inventory-content"></div>
+                </div>
+            </div>
+
+            <div id="customer-management-view" class="view" data-view="customer-management">
+                <div class="container">
+                    <h2>Gestão de Clientes</h2>
+                    <div id="customer-management-content"></div>
+                </div>
+            </div>
+
+            <div id="system-settings-view" class="view" data-view="system-settings">
+                <div class="container">
+                    <h2>Configurações do Sistema</h2>
+                    <div id="system-settings-content"></div>
+                </div>
+            </div>
+
+            <div id="profile-view" class="view" data-view="profile">
+                <div class="container">
+                    <h2>Meu Perfil</h2>
+                    <div id="profile-content"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('login-modal')">&times;</span>
+            <div id="auth-content"></div>
+        </div>
+    </div>
+
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('product-modal')">&times;</span>
+            <div id="product-details"></div>
+        </div>
+    </div>
+
+    <script type="module" src="src/main.js"></script>
+</body>
+</html>

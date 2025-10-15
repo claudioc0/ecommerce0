@@ -1,0 +1,37 @@
+Arquivos Lógicos Internos (ALIs)
+Estes são os dados que seu próprio sistema gerencia ativamente.
+
+Usuários (Clientes/Vendedores/Admins): Armazena informações de contas, como nome, e-mail, senhas, endereços e histórico de pedidos. É mantido pelo seu sistema.
+
+Produtos: O catálogo da sua loja, incluindo nome, descrição, preço, fotos, estoque e categorias.
+
+Carrinho de Compras: Mantém os itens que um usuário seleciona durante uma sessão de compra antes de finalizar o pedido.
+
+Pedidos (Orders): Registros permanentes de todas as vendas concluídas, contendo informações do cliente, produtos comprados, valor total, status e endereço de entrega.
+
+Cupons de Desconto: Códigos promocionais que o sistema cria, valida e aplica, gerenciando suas regras e datas de validade.
+
+Lista de Desejos (Wishlist): Uma lista de produtos que um usuário logado salva para comprar mais tarde. O sistema precisa manter a lista de cada usuário.
+
+Avaliações de Produtos (Reviews): Comentários e notas que os clientes submetem sobre os produtos. O sistema armazena e exibe essas avaliações.
+
+Tickets de Suporte ao Cliente: Registros de comunicação entre clientes e a equipe de suporte, incluindo o histórico da conversa para cada ticket aberto.
+
+Arquivos de Interface Externa (AIEs)
+Estes são dados que seu sistema consome ou referencia, mas que são mantidos por sistemas externos.
+
+Gateway de Pagamento: O serviço externo que processa as transações de cartão de crédito, PIX, etc. Seu sistema envia os dados da compra e lê a resposta (aprovado/recusado).
+
+Serviço de Cálculo de Frete: Uma API externa (como a dos Correios) que seu sistema consulta para obter os valores e prazos de entrega com base no CEP do cliente.
+
+Sistema de Análise de Terceiros: Plataforma como o Google Analytics. Seu sistema envia dados de navegação e eventos, mas a plataforma externa é quem armazena e processa esses dados.
+
+Provedor de Autenticação Externa (Login Social): Serviços como Google ou Facebook que permitem ao usuário fazer login no seu site. Seu sistema os consulta para confirmar a identidade do usuário.
+
+Serviço de Consulta de CEP: Uma API externa (como ViaCEP) que seu sistema usa para preencher automaticamente os campos de endereço quando o cliente digita o CEP.
+
+Sistema de Gestão de Estoque (ERP): Um sistema externo que é a fonte principal da verdade para os níveis de estoque. Seu e-commerce lê as informações de disponibilidade deste sistema.
+
+Serviço Anti-Fraude: Uma API externa que analisa os dados de um pedido para calcular um score de risco de fraude antes de aprovar a transação.
+
+API de Taxas de Câmbio: Um serviço financeiro externo que fornece as cotações de moedas em tempo real, usado caso sua loja venda para outros países.
