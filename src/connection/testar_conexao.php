@@ -21,17 +21,22 @@
     try {
         require_once 'db.php';
 
-        $stmt = $pdo->query('SELECT 1');
+        // Test RedBeanPHP connection
+        $test = R::getAll('SELECT 1');
 
         echo '<div class="container success">';
         echo '<h1>🎉 Conexão bem-sucedida!</h1>';
-        echo '<p>O PHP conectou-se com sucesso ao banco de dados "'. htmlspecialchars($db) .'".</p>';
+        echo '<p>O PHP conectou-se com sucesso ao banco de dados "ecommerce" usando RedBeanPHP.</p>';
         echo '<p>Hora do servidor: ' . date('Y-m-d H:i:s') . '</p>';
+
+        // Show table count
+        $tables = R::inspect();
+        echo '<p>Tabelas encontradas: ' . count($tables) . '</p>';
         echo '</div>';
 
-    } catch (PDOException $e) {
+    } catch (Exception $e) {
         echo '<div class="container error">';
-        echo '<h1> Falha na Conexão!</h1>';
+        echo '<h1>❌ Falha na Conexão!</h1>';
         echo '<p>Não foi possível conectar ao banco de dados. Verifique as credenciais e se o serviço do MySQL está em execução.</p>';
         echo '<p><strong>Erro:</strong> ' . htmlspecialchars($e->getMessage()) . '</p>';
         echo '</div>';

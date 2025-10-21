@@ -10,7 +10,7 @@ if (session_status() === PHP_SESSION_NONE) {
 R::setup(
     'mysql:host=localhost;dbname=ecommerce',
     'root',
-    'PUC@1234' // A sua senha
+    'root' // A sua senha
 );
 
 // Congela o esquema para a abordagem "database first".
