@@ -5,102 +5,82 @@ class Checkout {
     private $user_id;
 
     public function __construct() {
-
         $this->user_id = $_SESSION['user_id'] ?? null;
     }
 
     /**
-     * Processa a criação de um novo pedido usando RedBeanPHP.
+     * Processa a criação de um novo pedido usando os dados do carrinho na BD.
      * @return int|false O ID do novo pedido em caso de sucesso, ou false em caso de falha.
      */
     public function createOrder() {
-        if (empty($_SESSION['cart']) || !$this->user_id) {
+        if (!$this->user_id) {
             return false;
         }
 
         try {
-            // Inicia uma transação com RedBeanPHP
-            R::begin();
+            // 1. Encontra o cliente e o seu carrinho na base de dados
+            $cliente = R::findOne('cliente', 'usuario_id = ?', [$this->user_id]);
+            if (!$cliente) return false;
 
-            // Busca o bean (objeto) do cliente. R::findOne retorna um objeto ou null.
-            $cliente = R::findOne('cliente', 'id_usuario = ?', [$this->user_id]);
+            $carrinho = R::findOne('carrinho', 'cliente_id = ?', [$cliente->id]);
+            if (!$carrinho) return false;
 
-            // Se o perfil do cliente não existir, cria-o agora.
-            if (!$cliente) {
-                $cliente = R::dispense('cliente'); // Cria um novo bean 'cliente'
-                $cliente->id_usuario = $this->user_id;
-                R::store($cliente); // Guarda o novo cliente na base de dados
+            $items_no_carrinho = $carrinho->ownCarrinhoitemList;
+            if (empty($items_no_carrinho)) {
+                return false;
             }
 
-            $total_price = $this->calculateTotal();
+            // Inicia uma transação
+            R::begin();
 
-            // 1. Cria um novo "bean" (objeto) para o pedido
+            $total_price = $this->calculateTotal($items_no_carrinho);
+
+            // 2. Cria o Pedido
             $pedido = R::dispense('pedido');
-            
-            // Define as propriedades. RedBeanPHP mapeia para as colunas corretas.
             $pedido->cliente_id = $cliente->id; 
             $pedido->valor_total = $total_price;
             $pedido->status = 'pago';
-            $pedido->data_pedido = date('Y-m-d H:i:s'); // Define a data atual
-            
-            // Guarda o pedido na base de dados e obtém o seu ID
             $order_id = R::store($pedido);
 
-            // 2. Insere os itens do pedido
-            $product_quantities = array_count_values($_SESSION['cart']);
+            // 3. Copia os itens do carrinho para os itens do pedido
+            foreach ($items_no_carrinho as $item_carrinho) {
+                $produto = $item_carrinho->produto; // Carrega o produto relacionado
 
-            foreach ($product_quantities as $product_id => $quantity) {
-                // Carrega o bean do produto da base de dados
-                $produto = R::load('produto', $product_id);
-
-                if ($produto->id) { // Verifica se o produto foi encontrado
-                    $pedidoItem = R::dispense('pedidoitem');
-                    $pedidoItem->pedido_id = $order_id;
-                    $pedidoItem->produto_id = $product_id;
-                    $pedidoItem->quantidade = $quantity;
-                    $pedidoItem->preco_unitario = $produto->price; // Preço no momento da compra
-                    
-                    // Guarda o item do pedido
-                    R::store($pedidoItem);
-                }
+                $pedidoItem = R::dispense('pedidoitem');
+                $pedidoItem->pedido_id = $order_id;
+                $pedidoItem->produto_id = $item_carrinho->produto_id;
+                $pedidoItem->quantidade = $item_carrinho->quantidade;
+                $pedidoItem->preco_unitario = $produto->price;
+                
+                R::store($pedidoItem);
             }
 
-            // Se tudo correu bem, confirma a transação
-            R::commit();
+            // 4. Limpa o carrinho da base de dados
+            R::trash($carrinho); // O 'ON DELETE CASCADE' na BD apaga os carrinhoitem associados
 
-            // Limpa o carrinho da sessão
-            unset($_SESSION['cart']);
+            // Confirma a transação
+            R::commit();
             
             return $order_id;
 
         } catch (Exception $e) {
-            // Em caso de qualquer erro, reverte todas as operações da base de dados
             R::rollback();
-            error_log("Erro no checkout com RedBeanPHP: " . $e->getMessage());
+            error_log("Erro no checkout com RedBeanPHP (BD): " . $e->getMessage());
             return false;
         }
     }
 
     /**
-     * Calcula o valor total do carrinho usando RedBeanPHP.
+     * Calcula o valor total com base nos itens do carrinho passados como argumento.
+     * @param array $items_no_carrinho A lista de beans 'carrinhoitem'.
      * @return float O valor total.
      */
-    private function calculateTotal() {
+    private function calculateTotal($items_no_carrinho) {
         $total = 0.0;
-        if (empty($_SESSION['cart'])) {
-            return $total;
-        }
-        
-        $product_ids_unique = array_unique($_SESSION['cart']);
-        
-        // Carrega todos os produtos necessários com uma única consulta
-        // R::loadAll retorna um array de beans indexado pelo ID
-        $produtos = R::loadAll('produto', $product_ids_unique);
-        
-        // Itera sobre o carrinho na sessão para considerar as quantidades
-        foreach ($_SESSION['cart'] as $product_id) {
-            if (isset($produtos[$product_id])) {
-                $total += $produtos[$product_id]->price;
+        foreach ($items_no_carrinho as $item) {
+            $produto = $item->produto; // Carrega o produto relacionado
+            if ($produto) {
+                $total += $produto->price * $item->quantidade;
             }
         }
         return $total;

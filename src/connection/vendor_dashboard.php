@@ -1,6 +1,6 @@
 <?php
-// Ficheiro: src/connection/vendor_dashboard.php (Refatorado com ORM)
-require_once 'db.php'; // Inicia a sessão e configura o RedBeanPHP
+// Ficheiro: src/connection/vendor_dashboard.php
+require_once 'db.php'; // Inicia a sessão e o RedBeanPHP simplificado
 
 // Proteção da página
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'vendor') {
@@ -8,24 +8,22 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'vendor') {
     exit();
 }
 
-$lojista = R::findOne('lojista', 'id_usuario = ?', [$_SESSION['user_id']]);
+// A busca agora usa a coluna 'usuario_id'
+$lojista = R::findOne('lojista', 'usuario_id = ?', [$_SESSION['user_id']]);
 $message = '';
 
 if (!$lojista) {
-    // Se não houver um perfil de lojista, redireciona por segurança.
     header('Location: index.php');
     exit();
 }
 
-// Lógica para cadastrar novo produto
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
     if (empty($_POST['name']) || empty($_POST['price']) || !isset($_POST['stock'])) {
         $message = '<p class="text-error">Nome, preço e estoque são obrigatórios.</p>';
-    } elseif ((int)$_POST['stock'] < 0) {
-        $message = '<p class="text-error">A quantidade em estoque não pode ser um número negativo.</p>';
     } else {
         try {
-            // Cria o bean do produto
+            R::begin();
+
             $produto = R::dispense('produto');
             $produto->name = trim($_POST['name']);
             $produto->description = trim($_POST['description']);
@@ -33,28 +31,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
             $produto->image = trim($_POST['image']);
             $produto->category = trim($_POST['category']);
             $produto->stock = (int)$_POST['stock'];
-            $produto->id_lojista = $lojista->id;
-            $produto->createdAt = date('Y-m-d H:i:s');
+            
+            // --- CORREÇÃO: O RedBeanPHP entende a relação e o nome da coluna 'lojista_id' ---
+            $produto->lojista_id = $lojista->id; 
+            
+            // NÃO PRECISAMOS DE DEFINIR 'created_at'. O RedBeanPHP faz isso por nós
+            // porque a coluna na BD chama-se 'created_at'.
             
             R::store($produto);
             
-            // --- GERAÇÃO DA CLASSE/TABELA NOTIFICAÇÃO ---
-            // Após o produto ser guardado com sucesso, cria uma notificação.
             $notificacao = R::dispense('notificacao');
-            $notificacao->mensagem = "Novo produto '" . $produto->name . "' foi cadastrado pelo vendedor " . htmlspecialchars($_SESSION['user_name']) . ".";
+            $notificacao->lojista_id = $lojista->id;
+            $notificacao->mensagem = "Novo produto '" . $produto->name . "' foi cadastrado por você.";
             R::store($notificacao);
 
-            $message = '<p class="text-success">Produto cadastrado com sucesso e notificação gerada!</p>';
+            R::commit();
+
+            $message = '<p class="text-success">Produto cadastrado com sucesso!</p>';
 
         } catch (Exception $e) {
+            R::rollback();
             error_log("Erro ao cadastrar produto com ORM: " . $e->getMessage());
-            $message = '<p class="text-error">Ocorreu um erro ao cadastrar o produto.</p>';
+            $message = '<p class="text-error">Ocorreu um erro ao cadastrar o produto. Verifique os logs.</p>';
         }
     }
 }
 
-// Busca apenas os produtos que pertencem ao lojista logado
-$vendor_products = R::find('produto', 'id_lojista = ? ORDER BY createdAt DESC', [$lojista->id]);
+// --- CORREÇÃO: A busca agora usa as colunas corretas ('lojista_id' e 'created_at') ---
+$vendor_products = R::find('produto', 'lojista_id = ? ORDER BY created_at DESC', [$lojista->id]);
 
 ?>
 <!DOCTYPE html>
@@ -84,8 +88,7 @@ $vendor_products = R::find('produto', 'id_lojista = ? ORDER BY createdAt DESC', 
             <?php echo $message; ?>
             <form method="POST" action="vendor_dashboard.php" class="checkout-form" style="padding:0; box-shadow:none;">
                 <input type="hidden" name="add_product" value="1">
-                <!-- O resto do seu formulário HTML continua aqui... -->
-                 <div class="form-grid">
+                <div class="form-grid">
                     <div class="form-group">
                         <label for="name">Nome do Produto</label>
                         <input type="text" id="name" name="name" required>
@@ -105,7 +108,7 @@ $vendor_products = R::find('produto', 'id_lojista = ? ORDER BY createdAt DESC', 
                 </div>
                 <div class="form-group" style="margin-top: 16px;">
                     <label for="image">URL da Imagem</label>
-                    <input type="url" id="image" name="image" placeholder="https://exemplo.com/imagem.jpg">
+                    <input type="url" id="image" name="image" placeholder="https://placehold.co/600x400">
                 </div>
                 <div class="form-group" style="margin-top: 16px;">
                     <label for="description">Descrição</label>

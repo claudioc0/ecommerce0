@@ -1,30 +1,31 @@
 <?php
+// Ficheiro: src/connection/edit_product.php (Refatorado com RedBeanPHP)
 require_once 'db.php'; // Inicia a sessão e configura o RedBeanPHP
 
+// Proteção: Apenas vendedores podem aceder
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'vendor') {
     header('Location: index.php');
     exit();
 }
 
+// Valida o ID do produto
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     header('Location: vendor_dashboard.php');
     exit();
 }
-
 $product_id = $_GET['id'];
 $message = '';
 
-// --- LÓGICA DO ORM APLICADA AQUI ---
+// --- LÓGICA DO ORM CORRIGIDA ---
 
 // 1. Carrega o bean (objeto) do produto que se quer editar
 $produto = R::load('produto', $product_id);
 
-// 2. Carrega o bean do vendedor que está logado
-$lojista = R::findOne('lojista', 'id_usuario = ?', [$_SESSION['user_id']]);
+// 2. Carrega o bean do vendedor que está logado usando a coluna correta 'usuario_id'
+$lojista = R::findOne('lojista', 'usuario_id = ?', [$_SESSION['user_id']]);
 
-// 3. Verificação de Segurança CRUCIAL:
-// Garante que o produto existe E que pertence ao vendedor logado.
-if (!$produto->id || !$lojista || $produto->id_lojista != $lojista->id) {
+// 3. Verificação de Segurança CRUCIAL com a coluna correta 'lojista_id'
+if (!$produto->id || !$lojista || $produto->lojista_id != $lojista->id) {
     // Se o produto não existe ou não pertence ao vendedor, redireciona.
     header('Location: vendor_dashboard.php?status=not_found');
     exit();
@@ -45,8 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $produto->category = trim($_POST['category']);
             $produto->stock = (int)$_POST['stock'] >= 0 ? (int)$_POST['stock'] : 0;
             
-            // 5. Salva as alterações na base de dados.
-            // O RedBeanPHP deteta que o bean já existe e faz um UPDATE em vez de um INSERT.
+            // 5. Salva as alterações na base de dados (o RedBeanPHP faz o UPDATE)
             R::store($produto);
             
             $message = '<p class="text-success">Produto atualizado com sucesso!</p>';

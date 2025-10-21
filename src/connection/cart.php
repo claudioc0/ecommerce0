@@ -1,8 +1,8 @@
 <?php
-// Ficheiro: src/connection/cart.php (Refatorado com RedBeanPHP)
+// Ficheiro: src/connection/cart.php (Refatorado para usar a BD)
 require_once 'db.php'; // Inicia a sessão e configura o RedBeanPHP
 
-// Proteção da página: Apenas clientes logados podem ver o carrinho
+// Proteção da página
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'customer') {
     header('Location: login.php');
     exit();
@@ -10,34 +10,41 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'customer') {
 
 $cart_items = [];
 $total_price = 0;
-$cart_product_ids = $_SESSION['cart'] ?? [];
 
-if (!empty($cart_product_ids)) {
-    // --- LÓGICA DO ORM APLICADA AQUI ---
-    // 1. Conta a quantidade de cada produto no carrinho
-    $product_quantities = array_count_values($cart_product_ids);
-    $product_ids_unique = array_keys($product_quantities);
+try {
+    // 1. Encontra o perfil do cliente logado
+    $cliente = R::findOne('cliente', 'usuario_id = ?', [$_SESSION['user_id']]);
 
-    // 2. Carrega todos os beans (objetos) dos produtos necessários com uma única consulta
-    // R::loadAll() é o equivalente a "SELECT * FROM produto WHERE id IN (...)"
-    $products_in_cart = R::loadAll('produto', $product_ids_unique);
+    if ($cliente) {
+        // 2. Encontra o carrinho ativo para este cliente
+        $carrinho = R::findOne('carrinho', 'cliente_id = ?', [$cliente->id]);
 
-    // 3. Constrói o array final do carrinho para exibição no HTML
-    foreach ($products_in_cart as $product) {
-        $product_id = $product->id;
-        $quantity = $product_quantities[$product_id];
-        $subtotal = $product->price * $quantity;
-        $total_price += $subtotal;
+        if ($carrinho) {
+            // 3. Busca todos os itens associados a este carrinho
+            // A notação own<List> do RedBeanPHP carrega a lista de itens relacionados
+            $items_no_carrinho = $carrinho->ownCarrinhoitemList;
 
-        $cart_items[] = [
-            'id'       => $product_id,
-            'name'     => $product->name,
-            'price'    => $product->price,
-            'image'    => $product->image,
-            'quantity' => $quantity,
-            'subtotal' => $subtotal
-        ];
+            // 4. Constrói o array final do carrinho para exibição
+            foreach ($items_no_carrinho as $item) {
+                // $item->produto carrega o bean do produto relacionado automaticamente
+                $produto = $item->produto; 
+                
+                $subtotal = $produto->price * $item->quantidade;
+                $total_price += $subtotal;
+
+                $cart_items[] = [
+                    'item_id'  => $item->id, // ID do carrinhoitem, para remoção/update
+                    'name'     => $produto->name,
+                    'price'    => $produto->price,
+                    'image'    => $produto->image,
+                    'quantity' => $item->quantidade,
+                    'subtotal' => $subtotal
+                ];
+            }
+        }
     }
+} catch (Exception $e) {
+    error_log("Erro ao buscar itens do carrinho: " . $e->getMessage());
 }
 ?>
 <!DOCTYPE html>
@@ -63,8 +70,8 @@ if (!empty($cart_product_ids)) {
     <div class="container" style="padding-top: 32px;">
         <h2>Meu Carrinho de Compras</h2>
         
-        <?php if (isset($_GET['error']) && $_GET['error'] === 'checkout_failed'): ?>
-            <p class="text-error text-center mb-4">Ocorreu um erro ao finalizar a sua compra. Por favor, tente novamente.</p>
+        <?php if (isset($_GET['error'])): ?>
+            <p class="text-error text-center mb-4">Ocorreu um erro. Por favor, tente novamente.</p>
         <?php endif; ?>
 
         <?php if (empty($cart_items)): ?>
@@ -83,13 +90,13 @@ if (!empty($cart_product_ids)) {
                                 <p class="cart-item-price">R$ <?php echo number_format($item['price'], 2, ',', '.'); ?></p>
                                 <div class="quantity-controls">
                                     <form action="update_cart_quantity.php" method="POST" style="display: inline;">
-                                        <input type="hidden" name="product_id" value="<?php echo $item['id']; ?>">
+                                        <input type="hidden" name="item_id" value="<?php echo $item['item_id']; ?>">
                                         <input type="hidden" name="action" value="decrease">
                                         <button type="submit" class="quantity-btn">-</button>
                                     </form>
                                     <span class="quantity-input" style="padding: 0 10px;"><?php echo $item['quantity']; ?></span>
                                     <form action="update_cart_quantity.php" method="POST" style="display: inline;">
-                                        <input type="hidden" name="product_id" value="<?php echo $item['id']; ?>">
+                                        <input type="hidden" name="item_id" value="<?php echo $item['item_id']; ?>">
                                         <input type="hidden" name="action" value="increase">
                                         <button type="submit" class="quantity-btn">+</button>
                                     </form>
@@ -98,7 +105,7 @@ if (!empty($cart_product_ids)) {
                             <div style="text-align: right;">
                                 <p style="font-weight: 600;">Subtotal: R$ <?php echo number_format($item['subtotal'], 2, ',', '.'); ?></p>
                                 <form action="remove_from_cart.php" method="POST" class="mt-4">
-                                    <input type="hidden" name="product_id" value="<?php echo $item['id']; ?>">
+                                    <input type="hidden" name="item_id" value="<?php echo $item['item_id']; ?>">
                                     <button type="submit" style="background: none; border: none; color: var(--error-500); cursor: pointer; text-decoration: underline;">Remover</button>
                                 </form>
                             </div>
@@ -108,14 +115,6 @@ if (!empty($cart_product_ids)) {
 
                 <div class="cart-summary">
                     <h3>Resumo do Pedido</h3>
-                    <div class="summary-row">
-                        <span>Subtotal</span>
-                        <span>R$ <?php echo number_format($total_price, 2, ',', '.'); ?></span>
-                    </div>
-                    <div class="summary-row">
-                        <span>Frete</span>
-                        <span>Grátis</span>
-                    </div>
                     <div class="summary-row total">
                         <span>Total</span>
                         <span>R$ <?php echo number_format($total_price, 2, ',', '.'); ?></span>

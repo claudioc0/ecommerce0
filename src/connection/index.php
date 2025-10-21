@@ -1,24 +1,33 @@
 <?php
-// Ficheiro: src/connection/index.php (Refatorado com RedBeanPHP)
-require_once 'db.php'; // Inicia a sessão e configura o RedBeanPHP
+// Ficheiro: src/connection/index.php
+require_once 'db.php'; // Inicia a sessão e o RedBeanPHP simplificado
 
-// Inicializa o carrinho na sessão se ainda não existir
-if (!isset($_SESSION['cart'])) {
-    $_SESSION['cart'] = [];
+// --- LÓGICA DO CARRINHO ATUALIZADA AQUI ---
+$cart_item_count = 0;
+if (isset($_SESSION['user_id']) && $_SESSION['user_role'] === 'customer') {
+    try {
+        // Encontra o perfil do cliente logado
+        $cliente = R::findOne('cliente', 'usuario_id = ?', [$_SESSION['user_id']]);
+        if ($cliente) {
+            // Encontra o carrinho do cliente
+            $carrinho = R::findOne('carrinho', 'cliente_id = ?', [$cliente->id]);
+            if ($carrinho) {
+                // Conta quantos registos (tipos de produto) estão nesse carrinho
+                $cart_item_count = R::count('carrinhoitem', 'carrinho_id = ?', [$carrinho->id]);
+            }
+        }
+    } catch(Exception $e) {
+        // Em caso de erro, o contador fica a 0
+        error_log("Erro ao contar itens do carrinho: " . $e->getMessage());
+    }
 }
-// Calcula a quantidade de itens no carrinho (usando array_count_values para ser mais preciso com quantidades)
-$cart_item_count = isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0;
 
-
-// --- LÓGICA DO ORM APLICADA AQUI ---
-// Busca todos os beans (objetos) de produtos, ordenados pela data de criação.
-// A sintaxe é muito mais limpa e legível.
 $products = [];
 try {
-    $products = R::findAll('produto', 'ORDER BY createdAt DESC LIMIT 12');
+    // A busca agora usa a coluna 'created_at'
+    $products = R::findAll('produto', 'ORDER BY created_at DESC LIMIT 12');
 } catch (Exception $e) {
     error_log("Erro ao buscar produtos com ORM: " . $e->getMessage());
-    // A página pode continuar a ser renderizada, mas sem produtos.
 }
 ?>
 <!DOCTYPE html>
@@ -72,7 +81,7 @@ try {
                         </div>
                         <div id="products-grid" class="products-grid">
                             <?php if (empty($products)): ?>
-                                <p class="empty-state">Nenhum produto encontrado no momento.</p>
+                                <p class="empty-state">Nenhum produto encontrado no momento. Cadastre um produto como vendedor para vê-lo aqui!</p>
                             <?php else: ?>
                                 <?php foreach ($products as $product): ?>
                                     <div class="product-card">

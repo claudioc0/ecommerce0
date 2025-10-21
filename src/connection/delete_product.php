@@ -17,18 +17,16 @@ if (!isset($_POST['product_id']) || !is_numeric($_POST['product_id'])) {
 $product_id = $_POST['product_id'];
 
 try {
-    // --- LÓGICA DO ORM APLICADA AQUI ---
+    // --- LÓGICA DO ORM CORRIGIDA ---
 
     // 1. Carrega o bean (objeto) do produto que se quer apagar
     $produto = R::load('produto', $product_id);
 
-    // 2. Carrega o bean do vendedor que está logado
-    $lojista = R::findOne('lojista', 'id_usuario = ?', [$_SESSION['user_id']]);
+    // 2. Carrega o bean do vendedor que está logado usando a coluna correta 'usuario_id'
+    $lojista = R::findOne('lojista', 'usuario_id = ?', [$_SESSION['user_id']]);
 
-    // 3. Verificação de Segurança CRUCIAL:
-    // Garante que o produto existe E que o ID do lojista associado ao produto
-    // é o mesmo ID do lojista que está logado.
-    if ($produto->id && $lojista && $produto->id_lojista == $lojista->id) {
+    // 3. Verificação de Segurança CRUCIAL com a coluna correta 'lojista_id'
+    if ($produto->id && $lojista && $produto->lojista_id == $lojista->id) {
         // Se a verificação passar, apaga o produto da base de dados.
         R::trash($produto);
         header('Location: vendor_dashboard.php?status=deleted');
@@ -46,3 +44,4 @@ try {
     exit();
 }
 ?>
+

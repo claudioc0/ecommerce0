@@ -1,6 +1,24 @@
 <?php
-// Ficheiro: src/connection/product_detail.php (Refatorado com RedBeanPHP)
+// Ficheiro: src/connection/product_detail.php
 require_once 'db.php'; // Inicia a sessão e configura o RedBeanPHP
+
+// --- LÓGICA DO CARRINHO ATUALIZADA AQUI ---
+$cart_item_count = 0;
+if (isset($_SESSION['user_id']) && $_SESSION['user_role'] === 'customer') {
+    try {
+        $cliente = R::findOne('cliente', 'usuario_id = ?', [$_SESSION['user_id']]);
+        if ($cliente) {
+            $carrinho = R::findOne('carrinho', 'cliente_id = ?', [$cliente->id]);
+            if ($carrinho) {
+                // Conta o número de registos em 'carrinhoitem' associados a este carrinho
+                $cart_item_count = R::count('carrinhoitem', 'carrinho_id = ?', [$carrinho->id]);
+            }
+        }
+    } catch(Exception $e) {
+        error_log("Erro ao contar itens do carrinho: " . $e->getMessage());
+    }
+}
+
 
 // Valida o ID do produto na URL
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
@@ -9,24 +27,17 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 }
 $product_id = $_GET['id'];
 
-// --- LÓGICA DO ORM APLICADA AQUI ---
-// 1. Carrega o bean (objeto) do produto a partir do ID na URL
 $product = R::load('produto', $product_id);
 
-// Se o produto não for encontrado (ID não existe), redireciona
 if (!$product->id) {
     header('Location: index.php?status=not_found');
     exit();
 }
 
-// 2. Verificação de Segurança para Vendedor:
-// Verifica se o utilizador é um vendedor E se é o dono deste produto.
 $is_owner = false;
 if (isset($_SESSION['user_id']) && $_SESSION['user_role'] === 'vendor') {
-    // Carrega o perfil do lojista logado
-    $lojista = R::findOne('lojista', 'id_usuario = ?', [$_SESSION['user_id']]);
-    // Compara o ID do lojista logado com o ID do lojista associado ao produto
-    if ($lojista && $lojista->id == $product->id_lojista) {
+    $lojista = R::findOne('lojista', 'usuario_id = ?', [$_SESSION['user_id']]);
+    if ($lojista && $lojista->id == $product->lojista_id) {
         $is_owner = true;
     }
 }
@@ -50,7 +61,12 @@ if (isset($_SESSION['user_id']) && $_SESSION['user_role'] === 'vendor') {
                     <?php if ($_SESSION['user_role'] === 'vendor'): ?>
                         <a href="vendor_dashboard.php" class="nav-link">Painel</a>
                     <?php elseif ($_SESSION['user_role'] === 'customer'): ?>
-                         <a href="cart.php" class="nav-link">Carrinho</a>
+                         <a href="cart.php" class="cart-container" title="Carrinho">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                            <?php if ($cart_item_count > 0): ?>
+                                <span class="cart-badge"><?php echo $cart_item_count; ?></span>
+                            <?php endif; ?>
+                        </a>
                     <?php endif; ?>
                     <a href="logout.php" class="btn-secondary btn-sm">Sair</a>
                 <?php else: ?>
@@ -71,18 +87,21 @@ if (isset($_SESSION['user_id']) && $_SESSION['user_role'] === 'vendor') {
                 
                 <div class="mt-4">
                     <?php if ($is_owner): ?>
-                        <!-- Botões para o VENDEDOR que é DONO do produto -->
                         <a href="edit_product.php?id=<?php echo $product->id; ?>" class="btn-primary">Editar Produto</a>
                         <form action="delete_product.php" method="POST" onsubmit="return confirm('Tem a certeza de que deseja excluir este produto?');" style="display: inline;">
                             <input type="hidden" name="product_id" value="<?php echo $product->id; ?>">
                             <button type="submit" class="btn-secondary" style="background-color: var(--error-500); color: white; border: none;">Excluir Produto</button>
                         </form>
-                    <?php elseif(!isset($_SESSION['user_id']) || $_SESSION['user_role'] === 'customer'): ?>
-                         <!-- Botão para CLIENTE ou VISITANTE -->
+
+                    <?php elseif (isset($_SESSION['user_id']) && $_SESSION['user_role'] === 'customer'): ?>
                         <form action="add_to_cart.php" method="POST">
                             <input type="hidden" name="product_id" value="<?php echo $product->id; ?>">
                             <button type="submit" class="btn-primary" style="width: 100%;">Adicionar ao Carrinho</button>
                         </form>
+
+                    <?php elseif (!isset($_SESSION['user_id'])): ?>
+                        <a href="login.php" class="btn-primary" style="width: 100%; text-align: center;">Adicionar ao Carrinho</a>
+                    
                     <?php endif; ?>
                 </div>
             </div>

@@ -1,15 +1,8 @@
 <?php
-// Ficheiro: src/connection/register.php (Refatorado com RedBeanPHP)
+// Ficheiro: src/connection/register.php
 
-// --- MODO DE DEPURAÇÃO ATIVADO ---
-// Estas linhas forçam o PHP a mostrar o erro exato no ecrã.
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+require_once 'db.php'; // Inicia a sessão e configura o RedBeanPHP com o mapeamento global
 
-require_once 'db.php'; // Inicia a sessão e configura o RedBeanPHP
-
-// Se um utilizador já estiver logado, redireciona para a página principal.
 if (isset($_SESSION['user_id'])) {
     header('Location: index.php');
     exit();
@@ -18,18 +11,14 @@ if (isset($_SESSION['user_id'])) {
 $message = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // --- Dados do Formulário ---
     $nome = trim($_POST['nome']);
     $email = trim($_POST['email']);
     $senha = $_POST['senha'];
     $senha_confirm = $_POST['senha_confirm'];
     $role = $_POST['role'];
 
-    // --- Validação ---
     $errors = [];
-    if (empty($nome) || !in_array($role, ['customer', 'vendor'])) {
-        $errors[] = "Dados inválidos. Por favor, preencha todos os campos.";
-    }
+    if (empty($nome) || !in_array($role, ['customer', 'vendor'])) { $errors[] = "Dados inválidos."; }
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) { $errors[] = "Formato de e-mail inválido."; }
     if (strlen($senha) < 8) { $errors[] = "A senha deve ter no mínimo 8 caracteres."; }
     if ($senha !== $senha_confirm) { $errors[] = "As senhas não coincidem."; }
@@ -37,7 +26,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $errors[] = "Para vendedores, todos os campos da loja são obrigatórios.";
     }
 
-    // Verifica se o e-mail já existe usando o ORM
     $existing_user = R::findOne('usuario', 'email = ?', [$email]);
     if ($existing_user) {
         $errors[] = "Este e-mail já está cadastrado.";
@@ -45,47 +33,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (empty($errors)) {
         try {
-            // Inicia uma transação com RedBeanPHP
             R::begin();
 
-            // 1. Cria o bean (objeto) do Utilizador
             $usuario = R::dispense('usuario');
             $usuario->nome = $nome;
             $usuario->email = $email;
             $usuario->senha = password_hash($senha, PASSWORD_DEFAULT);
             $usuario->role = $role;
             
-            // Guarda o utilizador e obtém o seu ID
             $id_usuario = R::store($usuario);
 
-            // 2. Cria o bean do Cliente ou Lojista
             if ($role === 'customer') {
                 $cliente = R::dispense('cliente');
-                $cliente->id_usuario = $id_usuario;
-                R::store($cliente); // Guarda o cliente
+                // --- CORREÇÃO APLICADA AQUI ---
+                // O nome da coluna na base de dados é 'usuario_id', não 'id_usuario'.
+                $cliente->usuario_id = $id_usuario;
+                R::store($cliente);
             } elseif ($role === 'vendor') {
                 $lojista = R::dispense('lojista');
-                $lojista->id_usuario = $id_usuario;
+                // --- CORREÇÃO APLICADA AQUI ---
+                // O nome da coluna na base de dados é 'usuario_id', não 'id_usuario'.
+                $lojista->usuario_id = $id_usuario;
                 $lojista->cnpj = trim($_POST['cnpj']);
                 $lojista->razao_social = trim($_POST['razao_social']);
                 $lojista->nome_loja = trim($_POST['nome_loja']);
-                R::store($lojista); // Guarda o lojista
+                R::store($lojista);
             }
             
-            // Se tudo correu bem, confirma a transação
             R::commit();
             
             header('Location: login.php?status=success');
             exit();
 
         } catch (Exception $e) {
-            // Em caso de qualquer erro, desfaz a transação
             R::rollback();
-            error_log("Erro no registo com RedBeanPHP: " . $e->getMessage());
-            $message = '<div class="text-error text-center mb-4">Ocorreu um erro ao processar seu cadastro.</div>';
+            // Apanha e mostra o erro exato para depuração
+            die("<h1>Erro Detalhado da Base de Dados:</h1><pre>" . $e->getMessage() . "</pre>");
         }
     } else {
-        // Formata as mensagens de erro de validação
         $message = '<div class="text-error text-center mb-4">';
         foreach ($errors as $error) { $message .= "<p>$error</p>"; }
         $message .= '</div>';
@@ -96,7 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Criar Conta - Nossa Loja</title>
     <link rel="stylesheet" href="../styles/main.css"> 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">

@@ -1,5 +1,5 @@
 <?php
-// Ficheiro: src/connection/checkout.php (Refatorado com RedBeanPHP)
+// Ficheiro: src/connection/checkout.php (Refatorado para usar a BD)
 require_once 'db.php'; // Inicia a sessão e configura o RedBeanPHP
 
 // Proteção: Apenas clientes logados podem aceder
@@ -8,35 +8,53 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'customer') {
     exit();
 }
 
-// Se o carrinho estiver vazio, não há porquê estar aqui
-if (empty($_SESSION['cart'])) {
-    header('Location: cart.php');
-    exit();
-}
-
-// --- LÓGICA DO ORM APLICADA AQUI ---
+// --- LÓGICA DO ORM PARA LER O CARRINHO DA BD ---
 $cart_items = [];
 $total_price = 0;
-$cart_product_ids = $_SESSION['cart'];
 
-// 1. Conta a quantidade de cada produto no carrinho
-$product_quantities = array_count_values($cart_product_ids);
-$product_ids_unique = array_keys($product_quantities);
+try {
+    // 1. Encontra o perfil do cliente logado
+    $cliente = R::findOne('cliente', 'usuario_id = ?', [$_SESSION['user_id']]);
+    $carrinho_vazio = true;
 
-// 2. Carrega todos os beans (objetos) dos produtos necessários com uma única consulta
-$products_in_cart = R::loadAll('produto', $product_ids_unique);
+    if ($cliente) {
+        // 2. Encontra o carrinho ativo para este cliente
+        $carrinho = R::findOne('carrinho', 'cliente_id = ?', [$cliente->id]);
 
-// 3. Constrói o array final do carrinho para o resumo
-foreach ($products_in_cart as $product) {
-    $product_id = $product->id;
-    $quantity = $product_quantities[$product_id];
-    $total_price += $product->price * $quantity;
+        if ($carrinho) {
+            // 3. Busca todos os itens associados a este carrinho
+            $items_no_carrinho = $carrinho->ownCarrinhoitemList;
 
-    $cart_items[] = [
-        'name'     => $product->name,
-        'price'    => $product->price,
-        'quantity' => $quantity,
-    ];
+            if (!empty($items_no_carrinho)) {
+                $carrinho_vazio = false;
+
+                // 4. Constrói o array final para o resumo
+                foreach ($items_no_carrinho as $item) {
+                    $produto = $item->produto; // Carrega o produto relacionado
+                    
+                    $total_price += $produto->price * $item->quantidade;
+
+                    $cart_items[] = [
+                        'name'     => $produto->name,
+                        'price'    => $produto->price,
+                        'quantity' => $item->quantidade,
+                    ];
+                }
+            }
+        }
+    }
+
+    // Se o carrinho estiver vazio, não há porquê estar aqui
+    if ($carrinho_vazio) {
+        header('Location: cart.php');
+        exit();
+    }
+
+} catch (Exception $e) {
+    error_log("Erro ao buscar itens para o checkout: " . $e->getMessage());
+    // Em caso de erro, redireciona para o carrinho
+    header('Location: cart.php?error=1');
+    exit();
 }
 ?>
 <!DOCTYPE html>
