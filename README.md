@@ -1,5 +1,21 @@
 # EcoGear - Sistema de Alta Variabilidade
 
+![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-5-646CFF?logo=vite&logoColor=white)
+
+Projeto acadêmico sobre variabilidade de software: um mesmo e-commerce com experiências
+completamente diferentes conforme o tipo de usuário (cliente VIP, grifes, brechós,
+distribuidores, consultores de moda, auditoria de sustentabilidade), reaproveitando
+componentes de base.
+
+## Como rodar
+
+```bash
+npm install
+npm run dev
+```
+
 ## Conceito de Alta Variabilidade
 
 A **alta variabilidade** neste sistema significa que a mesma plataforma oferece experiências completamente diferentes baseadas no tipo de usuário, criando múltiplas "aplicações" dentro de uma única base de código.
